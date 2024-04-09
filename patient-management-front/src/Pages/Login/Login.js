@@ -79,15 +79,25 @@ const LoginForm = () => {
               <div className="d-flex justify-content-center py-4">
                 <a className="logo d-flex align-items-center w-auto">
                   <img src="./assets/img/logo.png" alt="" />
-                  <span className="d-none d-lg-block">File Share</span>
+                  <span className="d-none d-lg-block">Patient Management System</span>
                 </a>
               </div>
               <div className="card mb-3">
                 <div className="card-body">
+                  <ul class="nav nav-tabs nav-tabs-bordered">
+                      <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab"
+                          data-bs-target="#admin-login">Admin</button>
+                      </li>
+                      <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#doctor-login">Doctor
+                          </button>
+                      </li>
+                    </ul>
                   <div className="tab-content pt-2">
                     <div className="tab-pane fade show active profile-overview" id="admin-login">
                       <div className="pt-4 pb-2">
-                        <h5 className="card-title text-center pb-0 fs-4">Login Account</h5>
+                        <h5 className="card-title text-center pb-0 fs-4">Login To Your Admin Account</h5>
                         <p className="text-center small">Enter your username & password to login</p>
                       </div>
                       <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
@@ -116,6 +126,40 @@ const LoginForm = () => {
                         {errorMessage && <div className="error"> {errorMessage} </div>}
                       </form>
                     </div>
+                    <div class="tab-pane fade show active profile-overview"id="doctor-login">
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Doctor Account</h5>
+                    <p class="text-center small">Enter your username & password to login</p>
+                  </div>
+
+                  <form class="row g-3 needs-validation" novalidate>
+
+                    <div class="col-12">
+                      <label for="yourUsername" class="form-label">Username</label>
+                      <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                        <input type="text" name="username" class="form-control" id="yourUsername" required/>
+                        <div class="invalid-feedback">Please enter your username.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourPassword" class="form-label">Password</label>
+                      <input type="password" name="password" class="form-control" id="yourPassword" required/>
+                      <div class="invalid-feedback">Please enter your password!</div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe"/>
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                    </div>  
+                  </form>
+                </div>
                   </div>
                 </div>
               </div>
