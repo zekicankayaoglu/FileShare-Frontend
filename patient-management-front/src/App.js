@@ -7,14 +7,12 @@ import {Route, Routes} from 'react-router-dom'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
       <Routes>
           <Route path='/login-form' element={<LoginForm/>} />
           <Route path='/admins' element={<AdminList/>} />
           <Route path='/doctors' element={<DoctorList/>} />
           </Routes>
-      </header>
     </div>
   );
 }
