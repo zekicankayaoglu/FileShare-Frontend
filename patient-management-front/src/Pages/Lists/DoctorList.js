@@ -122,56 +122,13 @@ const DoctorList = () => {
       </header>
 
       <aside id="sidebar" className="sidebar">
-
         <ul className="sidebar-nav" id="sidebar-nav">
-
           <li className="nav-item">
-            <a className="nav-link collapsed" href="index.html">
-              <i className="ri ri-building-4-line"></i>
-              <span>Hospitals</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="pages-faq.html">
+            <a className="nav-link collapse" href="/doctors">
               <i className="bi bi-person"></i>
-              <span>Admins</span>
+              <span>Doctors</span>
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link collapsed" href="pages-patients.html">
-              <i className="bi bi-person"></i>
-              <span>Patients</span>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link collapsed" href="users-profile.html">
-              <i className="bi bi-person"></i>
-              <span>Patient</span>
-            </a>
-          </li>
-
-
-          <li className="nav-item">
-
-            <ul id="icons-nav" className="nav-content collapse " data-bs-parent="#sidebar-nav">
-              <li>
-                <a href="icons-bootstrap.html">
-                  <i className="bi bi-circle"></i><span>Bootstrap Icons</span>
-                </a>
-              </li>
-              <li>
-                <a href="icons-remix.html">
-                  <i className="bi bi-circle"></i><span>Remix Icons</span>
-                </a>
-              </li>
-              <li>
-                <a href="icons-boxicons.html">
-                  <i className="bi bi-circle"></i><span>Boxicons</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-
           <li className="nav-item">
             <a className="nav-link collapsed" href="pages-login.html">
               <i className="bi bi-box-arrow-in-right"></i>
@@ -183,7 +140,6 @@ const DoctorList = () => {
       </aside>
 
       <main id="main" className="main">
-
 
         <section className="section dashboard">
           <div className="card">
@@ -210,9 +166,9 @@ const DoctorList = () => {
                         <ul>
                           {doctors.map((doctor, index) => (
                             <li key={index} className="table-row">
-                              <div className="col col-2" data-label="Hospital Name">{doctor.hospitalId}</div>
-                              <div className="col col-3" data-label="Admin">{doctor.name}</div>
-                              <div className="col col-4" data-label="Mail">{doctor.mail}</div>
+                              <div className="col col-2" data-label="Hospital Name">{doctor.name}</div>
+                              <div className="col col-3" data-label="Admin">{doctor.mail}</div>
+                              <div className="col col-4" data-label="Mail">{doctor.phone}</div>
                               <div className="col col-5">
                                 {/* Düzenle ve Sil butonları */}
                               </div>

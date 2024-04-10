@@ -5,28 +5,28 @@ import './AdminList.css';
 import { NavLink } from 'react-router-dom';
 
 
-const AdminList = () => {
-  const [admins, setAdmins] = useState(null); // Başlangıçta null olarak başlatıldı
+const HospitalList = () => {
+  const [hospitals, setHospitals] = useState(null); // Başlangıçta null olarak başlatıldı
 
   useEffect(() => {
-    const fetchAdmins = async () => {
+    const fetchHospitals = async () => {
       try {
-        const response = await fetch('https://localhost:7050/GetAdmins');
+        const response = await fetch('https://localhost:7050/GetHospitals');
         if (response.ok) {
           const data = await response.json();
-          setAdmins(data); // Backend'den gelen admin verilerini state'e kaydet
+          setHospitals(data); // Backend'den gelen admin verilerini state'e kaydet
           console.log(data);
         } else {
-          console.error('Failed to fetch admins');
+          console.error('Failed to fetch hospitals');
         }
       } catch (error) {
-        console.error('An error occurred while fetching admins:', error);
+        console.error('An error occurred while fetching hospitals:', error);
       }
     };
 
     // Sadece bir kere veri çekme işlemini gerçekleştir
-    if (admins === null) {
-      fetchAdmins();
+    if (hospitals === null) {
+      fetchHospitals();
     }
   }, []);
   return (
@@ -120,13 +120,13 @@ const AdminList = () => {
         <ul className="sidebar-nav" id="sidebar-nav">
 
           <li className="nav-item">
-            <a className="nav-link collapsed" href="/hospitals">
+            <a className="nav-link collapse" href="/hospitals">
               <i className="ri ri-building-4-line"></i>
               <span>Hospitals</span>
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="pages-faq.html">
+            <a className="nav-link collapsed" href="/admins">
               <i className="bi bi-person"></i>
               <span>Admins</span>
             </a>
@@ -143,35 +143,34 @@ const AdminList = () => {
 
       <main id="main" className="main">
 
-
         <section className="section dashboard">
           <div className="card">
             <div className="card-body">
               <div className="row">
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
-                    <h2>ADMINS</h2>
+                    <h2>HOSPITALS</h2>
                     <button className="button-33" role="button">Add New Admin</button>
                   </div>
                   <ul className="responsive-table">
                     <li className="table-header">
                       <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Hospital</div>
-                      <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Admin
+                      <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Address
                       </div>
-                      <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Mail
+                      <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Phone
                       </div>
                       <div className="col col-5"></div>
                     </li>
                     <div>
-                      {admins === null ? (
+                      {hospitals === null ? (
                         <div>Loading...</div>
                       ) : (
                         <ul>
-                          {admins.map((admin, index) => (
+                          {hospitals.map((hospital, index) => (
                             <li key={index} className="table-row">
-                              <div className="col col-2" data-label="Hospital Name">{admin.hospitalId}</div>
-                              <div className="col col-3" data-label="Admin">{admin.name}</div>
-                              <div className="col col-4" data-label="Mail">{admin.mail}</div>
+                              <div className="col col-2" data-label="Hospital Name">{hospital.name}</div>
+                              <div className="col col-3" data-label="Address">{hospital.address}</div>
+                              <div className="col col-4" data-label="Mail">{hospital.phone}</div>
                               <div className="col col-5">
                                 {/* Düzenle ve Sil butonları */}
                               </div>
@@ -191,4 +190,4 @@ const AdminList = () => {
   );
 };
 
-export default AdminList;
+export default HospitalList;
