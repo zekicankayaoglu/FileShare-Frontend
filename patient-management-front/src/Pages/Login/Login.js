@@ -35,7 +35,13 @@ const LoginForm = () => {
         const responseData = await response.json();
         const userID = responseData.userId;
         localStorage.setItem('user', userID);
-        navigate(activeForm === 'admin' ? '/admins' : '/doctors');
+        if (userID === 0) {
+          navigate('/admins');
+      } else if (responseData.userType === "admin") {
+          navigate('/doctors');
+      } else {
+          navigate('/'); // Üçüncü koşul için varsayılan bir yönlendirme belirleyebilirsiniz.
+      }
       } else {
         console.error('Login failed');
         setErrorMessage('Wrong mail or password!');
