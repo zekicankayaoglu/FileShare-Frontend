@@ -40,7 +40,7 @@ const LoginForm = () => {
       } else if (responseData.userType === "admin") {
           navigate('/doctors');
       } else {
-          navigate('/'); // Üçüncü koşul için varsayılan bir yönlendirme belirleyebilirsiniz.
+          navigate('/patients');
       }
       } else {
         console.error('Login failed');

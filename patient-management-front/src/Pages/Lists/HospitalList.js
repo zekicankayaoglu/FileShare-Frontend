@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import './AdminList.css';
+import './HospitalList.css';
 
 import { NavLink } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const HospitalList = () => {
         const response = await fetch('https://localhost:7050/GetHospitals');
         if (response.ok) {
           const data = await response.json();
-          setHospitals(data); // Backend'den gelen admin verilerini state'e kaydet
+          setHospitals(data); // Backend'den gelen hospital verilerini state'e kaydet
           console.log(data);
         } else {
           console.error('Failed to fetch hospitals');
@@ -66,7 +66,7 @@ const HospitalList = () => {
             <li className="nav-item dropdown pe-3">
               <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                 <img src="assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
-                <span className="d-none d-md-block dropdown-toggle ps-2">Admin</span>
+                <span className="d-none d-md-block dropdown-toggle ps-2">Super Admin</span>
               </a>{/* End Profile Iamge Icon */}
               <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li className="dropdown-header">
@@ -132,7 +132,7 @@ const HospitalList = () => {
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link collapsed" href="pages-login.html">
+            <a className="nav-link collapsed" href="/login-form">
               <i className="bi bi-box-arrow-in-right"></i>
               <span>Logout</span>
             </a>
@@ -150,7 +150,7 @@ const HospitalList = () => {
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
                     <h2>HOSPITALS</h2>
-                    <button className="button-33" role="button">Add New Admin</button>
+                    <button className="button-33" role="button">Add New Hospital</button>
                   </div>
                   <ul className="responsive-table">
                     <li className="table-header">
