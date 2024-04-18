@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-
+import { NavLink } from 'react-router-dom';
 import './PatientList.css';
 
-
-import { NavLink } from 'react-router-dom';
-
-
-const PatientList = () => {
-  const [patients, setPatients] = useState(null); // Başlangıçta null olarak başlatıldı
+function PatientList() {
+  const [patients, setPatients] = useState(null); 
   const doctorId = localStorage.getItem('user');
+
   useEffect(() => {
     const fetchPatients = async () => {
       try {
@@ -20,8 +17,7 @@ const PatientList = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setPatients(data); // Backend'den gelen patient verilerini state'e kaydet
-          console.log(data);
+          setPatients(data); 
         } else {
           console.error('Failed to fetch patients.');
         }
@@ -30,11 +26,12 @@ const PatientList = () => {
       }
     };
 
-    // Sadece bir kere veri çekme işlemini gerçekleştir
+    // Fetch patients only once when component mounts
     if (patients === null) {
       fetchPatients();
     }
   }, []);
+
   return (
     <body>
       {/* ======= Header ======= */}
@@ -140,7 +137,6 @@ const PatientList = () => {
       </aside>
 
       <main id="main" className="main">
-
         <section className="section dashboard">
           <div className="card">
             <div className="card-body">
@@ -153,10 +149,8 @@ const PatientList = () => {
                   <ul className="responsive-table">
                     <li className="table-header">
                       <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Patient Name</div>
-                      <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Mail
-                      </div>
-                      <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Phone
-                      </div>
+                      <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Mail</div>
+                      <div className="col col-4"><i className="ri ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Phone</div>
                       <div className="col col-5"></div>
                     </li>
                     <div>
@@ -166,12 +160,22 @@ const PatientList = () => {
                         <ul>
                           {patients.map((patient, index) => (
                             <li key={index} className="table-row">
-                              <div className="col col-2" data-label="Patient Name">{patient.name}</div>
-                              <div className="col col-3" data-label="Doctor">{patient.mail}</div>
-                              <div className="col col-4" data-label="Mail">{patient.phone}</div>
-                              <div className="col col-5">
-                                {/* Düzenle ve Sil butonları */}
-                              </div>
+                                <div className="col col-2" data-label="Patient Name">{patient.name}</div>
+                                <div className="col col-3" data-label="Doctor">{patient.mail}</div>
+                                <div className="col col-4" data-label="Mail">{patient.phone}</div>
+                                <div className="col col-5">
+                                    <div className="btn-group">
+                                        <a className="btn btn-primary btn-sm" title="Open Patient" href={`/patients/${patient.patientId}`}>
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <span style={{marginRight: 10}} />
+                                        <a className="btn btn-primary btn-sm" title="Edit Patient">
+                                            <i className="ri ri-edit-2-fill"></i>
+                                        </a>
+                                        <span style={{marginRight: 10}} />
+                                        <a className="btn btn-danger btn-sm" title="Remove Patient"><i className="bi bi-trash" /></a>
+                                    </div>
+                                </div>
                             </li>
                           ))}
                         </ul>
@@ -186,6 +190,6 @@ const PatientList = () => {
       </main>
     </body>
   );
-};
+}
 
 export default PatientList;

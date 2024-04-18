@@ -5,6 +5,7 @@ import AdminList from './Pages/Lists/AdminList';
 import DoctorList from './Pages/Lists/DoctorList';
 import HospitalList from './Pages/Lists/HospitalList'
 import PatientList from './Pages/Lists/PatientList';
+import PatientDetails from './Pages/Patient Details/PatientDetails';
 
 import {Route, Routes} from 'react-router-dom'
 
@@ -18,6 +19,7 @@ function App() {
           <Route path='/doctors' element={<DoctorList/>} />
           <Route path='/hospitals' element={<HospitalList/>} />
           <Route path='/patients' element={<PatientList/>} />
+          <Route path='/patients/:id' element={<PatientDetails/>} />
           </Routes>
     </div>
   );
