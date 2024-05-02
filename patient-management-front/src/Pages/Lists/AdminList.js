@@ -7,6 +7,13 @@ import { NavLink } from 'react-router-dom';
 
 const AdminList = () => {
   const [admins, setAdmins] = useState(null); // Başlangıçta null olarak başlatıldı
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    adminName: '',
+    phone: '',
+    mail: '',
+    password: ''
+  });
 
   useEffect(() => {
     const fetchAdmins = async () => {
@@ -29,6 +36,47 @@ const AdminList = () => {
       fetchAdmins();
     }
   }, []);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+    try {
+      const response = await fetch('https://localhost:7050/AddAdmin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      if (response.ok) {
+        // Başarılı bir şekilde admin eklendiğinde yapılacak işlemler
+        console.log('Admin successfully added');
+        // Yeni bir veri çekme işlemi başlat
+        //fetchAdmins();
+        // Form verilerini sıfırla
+        setFormData({
+          username: '',
+          password: '',
+          mail: '',
+          phone: ''
+        });
+        setShowModal(false);
+      } else {
+        console.error('Failed to add admin');
+      }
+    } catch (error) {
+      console.error('An error occurred while adding admin:', error);
+    }
+  };
+  const toggleModal = () => {
+    setShowModal(!showModal);
+
+  };
+  
   return (
     <body>
       {/* ======= Header ======= */}
@@ -143,7 +191,6 @@ const AdminList = () => {
 
       <main id="main" className="main">
 
-
         <section className="section dashboard">
           <div className="card">
             <div className="card-body">
@@ -151,8 +198,46 @@ const AdminList = () => {
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
                     <h2>ADMINS</h2>
-                    <button className="button-33" role="button">Add New Admin</button>
+                    <button className="button-33" role="button" onClick={toggleModal}>Add New Admin</button>
                   </div>
+                  {showModal && (
+                    <div class="xxx">
+                    <div class="popup-box">
+                      <form onSubmit={handleSubmit}>
+                        <div className="row mb-3">
+                        <div class="row mb-3">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" value={formData.adminName} onChange={handleInputChange}/>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputText" value={formData.phone} onChange={handleInputChange}/>
+                          </div>
+                        </div>
+                          <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                            <div class="col-sm-10">
+                              <input type="email" class="form-control" id="inputEmail" value={formData.mail} onChange={handleInputChange}/>
+                            </div>
+                          </div>
+                          <div class="row mb-3">
+                            <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                            <div class="col-sm-10">
+                              <input type="password" class="form-control" id="inputPassword" value={formData.password} onChange={handleInputChange}/>
+                            </div>
+                          </div> 
+                        </div>
+                        <div className="text-center">
+                          <button type="submit" className="btn btn-primary">Submit</button>
+                          <button className="btn-close-popup" onClick={toggleModal}>Close</button>
+                        </div>
+                      </form>
+                    </div>
+                    </div>
+                )}
                   <ul className="responsive-table">
                     <li className="table-header">
                       <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Hospital</div>
