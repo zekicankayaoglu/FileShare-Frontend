@@ -208,25 +208,25 @@ const AdminList = () => {
                         <div class="row mb-3">
                           <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inputText" value={formData.adminName} onChange={handleInputChange}/>
+                            <input type="text" class="form-control" id="inputText" name="adminName" defaultValue={formData.adminName} onChange={handleInputChange}/>
                           </div>
                         </div>
                         <div class="row mb-3">
                           <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inputText" value={formData.phone} onChange={handleInputChange}/>
+                            <input type="text" class="form-control" id="inputText" name="phone" defaultValue={formData.phone} onChange={handleInputChange}/>
                           </div>
                         </div>
                           <div class="row mb-3">
                             <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-10">
-                              <input type="email" class="form-control" id="inputEmail" value={formData.mail} onChange={handleInputChange}/>
+                              <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange}/>
                             </div>
                           </div>
                           <div class="row mb-3">
                             <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
                             <div class="col-sm-10">
-                              <input type="password" class="form-control" id="inputPassword" value={formData.password} onChange={handleInputChange}/>
+                              <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange}/>
                             </div>
                           </div> 
                         </div>
