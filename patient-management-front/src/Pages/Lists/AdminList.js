@@ -12,57 +12,69 @@ const AdminList = () => {
     adminName: '',
     phone: '',
     mail: '',
-    password: ''
+    password: '',
+    hospital: ''
   });
 
   useEffect(() => {
-    const fetchAdmins = async () => {
-      try {
-        const response = await fetch('https://localhost:7050/GetAdmins');
-        if (response.ok) {
-          const data = await response.json();
-          setAdmins(data); // Backend'den gelen admin verilerini state'e kaydet
-          console.log(data);
-        } else {
-          console.error('Failed to fetch admins');
-        }
-      } catch (error) {
-        console.error('An error occurred while fetching admins:', error);
-      }
-    };
-
-    // Sadece bir kere veri çekme işlemini gerçekleştir
-    if (admins === null) {
-      fetchAdmins();
-    }
+    fetchAdmins(); // Fetch admins on component mount
   }, []);
+
+
+  const fetchAdmins = async () => {
+    try {
+      const response = await fetch('https://localhost:7050/GetAdmins');
+      if (response.ok) {
+        const data = await response.json();
+        setAdmins(data); // Backend'den gelen admin verilerini state'e kaydet
+        console.log(data);
+      } else {
+        console.error('Failed to fetch admins');
+      }
+    } catch (error) {
+      console.error('An error occurred while fetching admins:', error);
+    }
+  };
+
+  // Sadece bir kere veri çekme işlemini gerçekleştir
+  if (admins === null) {
+    fetchAdmins();
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
     try {
-      const response = await fetch('https://localhost:7050/AddAdmin', {
+      const response = await fetch('https://localhost:7050/AdminSign', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          Name: formData.adminName,
+          Phone: formData.phone,
+          Mail: formData.mail,
+          Password: formData.password,
+          HospitalId: formData.hospital // Assuming hospitalId is selected from the form
+        })
       });
       if (response.ok) {
         // Başarılı bir şekilde admin eklendiğinde yapılacak işlemler
         console.log('Admin successfully added');
         // Yeni bir veri çekme işlemi başlat
-        //fetchAdmins();
+        fetchAdmins();
         // Form verilerini sıfırla
         setFormData({
-          username: '',
+          adminName: '',
           password: '',
           mail: '',
-          phone: ''
+          phone: '',
+          hospital: ''
         });
         setShowModal(false);
       } else {
@@ -72,11 +84,28 @@ const AdminList = () => {
       console.error('An error occurred while adding admin:', error);
     }
   };
+
+  const handleRemoveAdmin = async (adminId) => {
+    try {
+      const response = await fetch(`https://localhost:7050/RemoveAdmin?adminId=${adminId}`, {
+        method: 'DELETE',
+      });
+      if (response.status === 200) {
+        console.log('Admin successfully removed');
+        fetchAdmins(); // Fetch updated admins after successful removal
+      } else {
+        console.error('Failed to remove admin');
+      }
+    } catch (error) {
+      console.error('An error occurred while removing admin:', error);
+    }
+  };
+
   const toggleModal = () => {
     setShowModal(!showModal);
 
   };
-  
+
   return (
     <body>
       {/* ======= Header ======= */}
@@ -202,42 +231,48 @@ const AdminList = () => {
                   </div>
                   {showModal && (
                     <div class="xxx">
-                    <div class="popup-box">
-                      <form onSubmit={handleSubmit}>
-                        <div className="row mb-3">
-                        <div class="row mb-3">
-                          <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
-                          <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inputText" name="adminName" defaultValue={formData.adminName} onChange={handleInputChange}/>
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
-                          <div class="col-sm-10">
-                            <input type="text" class="form-control" id="inputText" name="phone" defaultValue={formData.phone} onChange={handleInputChange}/>
-                          </div>
-                        </div>
-                          <div class="row mb-3">
-                            <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
-                            <div class="col-sm-10">
-                              <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange}/>
+                      <div class="popup-box">
+                        <form onSubmit={handleSubmit}>
+                          <div className="row mb-3">
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputText" name="adminName" defaultValue={formData.adminName} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputText" name="phone" defaultValue={formData.phone} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <div class="col-sm-10">
+                                <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                              <div class="col-sm-10">
+                                <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputHospital3" class="col-sm-2 form-label">Hospital ID</label>
+                              <div class="col-sm-10">
+                                <input type="hospital" class="form-control" id="inputHospital" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange} />
+                              </div>
                             </div>
                           </div>
-                          <div class="row mb-3">
-                            <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
-                            <div class="col-sm-10">
-                              <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange}/>
-                            </div>
-                          </div> 
-                        </div>
-                        <div className="text-center">
-                          <button type="submit" className="btn btn-primary">Submit</button>
-                          <button className="btn-close-popup" onClick={toggleModal}>Close</button>
-                        </div>
-                      </form>
+                          <div className="text-center">
+                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button className="btn-close-popup" onClick={toggleModal}>Close</button>
+                          </div>
+                        </form>
+                      </div>
                     </div>
-                    </div>
-                )}
+                  )}
                   <ul className="responsive-table">
                     <li className="table-header">
                       <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Hospital</div>
@@ -258,7 +293,19 @@ const AdminList = () => {
                               <div className="col col-3" data-label="Admin">{admin.name}</div>
                               <div className="col col-4" data-label="Mail">{admin.mail}</div>
                               <div className="col col-5">
-                                {/* Düzenle ve Sil butonları */}
+                                <div className="btn-group">
+                                  <a className="btn btn-primary btn-sm" title="Open Admin" href=''>
+                                    <i class="bi bi-eye"></i>
+                                  </a>
+                                  <span style={{ marginRight: 10 }} />
+                                  <a className="btn btn-primary btn-sm" title="Edit Admin">
+                                    <i className="ri ri-edit-2-fill"></i>
+                                  </a>
+                                  <span style={{ marginRight: 10 }} />
+                                  <button className="btn btn-danger btn-sm" title="Remove Admin" onClick={() => handleRemoveAdmin(admin.adminId)}>
+                                    <i className="bi bi-trash" />
+                                  </button>
+                                </div>
                               </div>
                             </li>
                           ))}

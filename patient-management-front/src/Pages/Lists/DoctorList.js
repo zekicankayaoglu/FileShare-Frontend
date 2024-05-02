@@ -130,7 +130,7 @@ const DoctorList = () => {
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link collapsed" href="pages-login.html">
+            <a className="nav-link collapsed" href="/login-form">
               <i className="bi bi-box-arrow-in-right"></i>
               <span>Logout</span>
             </a>
@@ -148,7 +148,7 @@ const DoctorList = () => {
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
                     <h2>DOCTORS</h2>
-                    <button className="button-33" role="button">Add New Admin</button>
+                    <button className="button-33" role="button">Add New Doctor</button>
                   </div>
                   <ul className="responsive-table">
                     <li className="table-header">

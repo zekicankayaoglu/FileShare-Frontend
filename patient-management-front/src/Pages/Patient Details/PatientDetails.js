@@ -20,7 +20,7 @@ const PatientDetails = () => {
             <header id="header" className="header fixed-top d-flex align-items-center">
                 <div className="d-flex align-items-center justify-content-between">
                     <a href="index.html" className="logo d-flex align-items-center">
-                        <img src="assets/img/logo.png" alt />
+                        <img src="/assets/img/logo.png" alt />
                         <span className="d-none d-lg-block">Patient Management</span>
                     </a>
                     <i className="bi bi-list toggle-sidebar-btn" />
@@ -40,7 +40,7 @@ const PatientDetails = () => {
                         </li>{/* End Search Icon*/}
                         <li className="nav-item dropdown pe-3">
                             <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                                <img src="assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
+                                <img src="/assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
                                 <span className="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
                             </a>{/* End Profile Iamge Icon */}
                             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -118,7 +118,7 @@ const PatientDetails = () => {
                     <div className="row align-items-center">
                         <div className="col-auto">
                             {/* Add the image here */}
-                            <img src="assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" style={{ width: 60, height: 60 }} />
+                            <img src="/assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" style={{ width: 60, height: 60 }} />
                         </div>
                         <div className="col">
                             {patient ? (
