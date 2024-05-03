@@ -9,8 +9,23 @@ import { NavLink } from 'react-router-dom';
 const DoctorList = () => {
   const [doctors, setDoctors] = useState(null); // Başlangıçta null olarak başlatıldı
   const adminId = localStorage.getItem('user');
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    doctorName: '',
+    phone: '',
+    mail: '',
+    password: '',
+    hospital: '',
+  });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
   useEffect(() => {
-    const fetchAdmins = async () => {
+    fetchDoctors(); // Fetch admins on component mount
+  }, []);
+
+    const fetchDoctors = async () => {
       try {
         const response = await fetch(`https://localhost:7050/GetDoctors?adminId=${adminId}`, {
           method: 'GET',
@@ -32,9 +47,69 @@ const DoctorList = () => {
 
     // Sadece bir kere veri çekme işlemini gerçekleştir
     if (doctors === null) {
-      fetchAdmins();
+      fetchDoctors();
     }
-  }, []);
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      console.log(formData);
+      try {
+        const response = await fetch('https://localhost:7050/DoctorSign', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            Name: formData.doctorName,
+            Phone: formData.phone,
+            Mail: formData.mail,
+            Password: formData.password,
+            HospitalName: formData.hospital,
+            AdminId: adminId
+          })
+        });
+        if (response.ok) {
+          // Başarılı bir şekilde admin eklendiğinde yapılacak işlemler
+          console.log('Admin successfully added');
+          // Yeni bir veri çekme işlemi başlat
+          fetchDoctors();
+          // Form verilerini sıfırla
+          setFormData({
+            doctorName: '',
+            password: '',
+            mail: '',
+            phone: '',
+            hospital: '',
+        
+          });
+          setShowModal(false);
+        } else {
+          console.error('Failed to add doctor');
+        }
+      } catch (error) {
+        console.error('An error occurred while adding doctor:', error);
+      }
+    };
+    const handleRemoveDoctor = async (doctorId) => {
+      try {
+        const response = await fetch(`https://localhost:7050/RemoveDoctor?doctorId=${doctorId}`, {
+          method: 'DELETE',
+        });
+        if (response.status === 200) {
+          console.log('Admin successfully removed');
+          fetchDoctors(); // Fetch updated admins after successful removal
+        } else {
+          console.error('Failed to remove doctor');
+        }
+      } catch (error) {
+        console.error('An error occurred while removing doctor:', error);
+      }
+    };
+    
+  const toggleModal = () => {
+    setShowModal(!showModal);
+
+  };
+  
   return (
     <body>
       {/* ======= Header ======= */}
@@ -148,8 +223,52 @@ const DoctorList = () => {
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
                     <h2>DOCTORS</h2>
-                    <button className="button-33" role="button">Add New Doctor</button>
+                    <button className="button-33" role="button" onClick={toggleModal}>Add New Doctor</button>
                   </div>
+                  {showModal && (
+                    <div class="xxx">
+                      <div class="popup-box">
+                        <form onSubmit={handleSubmit}>
+                          <div className="row mb-3">
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Doctor Name</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputName" name="doctorName" defaultValue={formData.doctorName} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputPhone" name="phone" defaultValue={formData.phone} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <div class="col-sm-10">
+                                <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                              <div class="col-sm-10">
+                                <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputHospital" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <button type="submit" className="btn btn-primary">Submit</button>
+                            <button className="btn-close-popup" onClick={toggleModal}>Close</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
                   <ul className="responsive-table">
                     <li className="table-header">
                       <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Doctor Name</div>
@@ -157,7 +276,9 @@ const DoctorList = () => {
                       </div>
                       <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Phone
                       </div>
-                      <div className="col col-5"></div>
+                      <div className="col col-5">
+                                
+                              </div>
                     </li>
                     <div>
                       {doctors === null ? (
@@ -170,7 +291,19 @@ const DoctorList = () => {
                               <div className="col col-3" data-label="Admin">{doctor.mail}</div>
                               <div className="col col-4" data-label="Mail">{doctor.phone}</div>
                               <div className="col col-5">
-                                {/* Düzenle ve Sil butonları */}
+                                <div className="btn-group">
+                                  <a className="btn btn-primary btn-sm" title="Open Admin" href=''>
+                                    <i class="bi bi-eye"></i>
+                                  </a>
+                                  <span style={{ marginRight: 10 }} />
+                                  <a className="btn btn-primary btn-sm" title="Edit Admin">
+                                    <i className="ri ri-edit-2-fill"></i>
+                                  </a>
+                                  <span style={{ marginRight: 10 }} />
+                                  <button className="btn btn-danger btn-sm" title="Remove Admin" onClick={() => handleRemoveDoctor(doctor.doctorId)}>
+                                    <i className="bi bi-trash" />
+                                  </button>
+                                </div>
                               </div>
                             </li>
                           ))}
