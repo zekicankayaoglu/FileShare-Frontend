@@ -292,9 +292,6 @@ const DoctorList = () => {
                               <div className="col col-4" data-label="Mail">{doctor.phone}</div>
                               <div className="col col-5">
                                 <div className="btn-group">
-                                  <a className="btn btn-primary btn-sm" title="Open Admin" href=''>
-                                    <i class="bi bi-eye"></i>
-                                  </a>
                                   <span style={{ marginRight: 10 }} />
                                   <a className="btn btn-primary btn-sm" title="Edit Admin">
                                     <i className="ri ri-edit-2-fill"></i>

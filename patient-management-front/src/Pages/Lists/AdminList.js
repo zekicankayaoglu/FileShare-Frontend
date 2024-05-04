@@ -8,6 +8,8 @@ import { NavLink } from 'react-router-dom';
 const AdminList = () => {
   const [admins, setAdmins] = useState(null); // Başlangıçta null olarak başlatıldı
   const [showModal, setShowModal] = useState(false);
+  const [selectedAdminId, setAdminId] = useState(null);
+
   const [formData, setFormData] = useState({
     adminName: '',
     phone: '',
@@ -15,10 +17,12 @@ const AdminList = () => {
     password: '',
     hospital: ''
   });
+  const [hospitals, setHospitals] = useState([]);
   const [editMode, setEditMode] = useState(false);
 const [editHospitalId, setEditHospitalId] = useState(null);
   useEffect(() => {
     fetchAdmins(); // Fetch admins on component mount
+    fetchHospitals();
   }, []);
 
 
@@ -49,6 +53,10 @@ const [editHospitalId, setEditHospitalId] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.hospital === undefined) {
+      alert("Please select a hospital");
+      return;
+    }
     console.log(formData);
     try {
       const response = await fetch('https://localhost:7050/AdminSign', {
@@ -61,7 +69,7 @@ const [editHospitalId, setEditHospitalId] = useState(null);
           Phone: formData.phone,
           Mail: formData.mail,
           Password: formData.password,
-          HospitalId: formData.hospital // Assuming hospitalId is selected from the form
+          HospitalName: formData.hospital // Assuming hospitalId is selected from the form
         })
       });
       if (response.ok) {
@@ -85,37 +93,102 @@ const [editHospitalId, setEditHospitalId] = useState(null);
       console.error('An error occurred while adding admin:', error);
     }
   };
-
-  const handleRemoveAdmin = async (adminId) => {
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (formData.hospital === undefined) {
+      alert("Please select a hospital");
+      return;
+    }
+    console.log(formData);
     try {
-      const response = await fetch(`https://localhost:7050/RemoveAdmin?adminId=${adminId}`, {
-        method: 'DELETE',
+      const response = await fetch('https://localhost:7050/AdminUpdate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          Name: formData.adminName,
+          Phone: formData.phone,
+          Mail: formData.mail,
+          Password: formData.password,
+          HospitalName: formData.hospital, // Assuming hospitalId is selected from the form
+          AdminId: selectedAdminId
+        })
       });
-      if (response.status === 200) {
-        console.log('Admin successfully removed');
-        fetchAdmins(); // Fetch updated admins after successful removal
+      if (response.ok) {
+        // Başarılı bir şekilde admin eklendiğinde yapılacak işlemler
+        console.log('Admin successfully updated');
+        // Yeni bir veri çekme işlemi başlat
+        fetchAdmins();
+        // Form verilerini sıfırla
+        setFormData({
+          adminName: '',
+          password: '',
+          mail: '',
+          phone: '',
+          hospital: ''
+        });
+        setEditMode(false);
       } else {
-        console.error('Failed to remove admin');
+        console.error('Failed to update admin');
       }
     } catch (error) {
-      console.error('An error occurred while removing admin:', error);
+      console.error('An error occurred while updating admin:', error);
     }
   };
+  const fetchHospitals = async () => {
+    try {
+      const response = await fetch('https://localhost:7050/GetHospitals');
+      if (response.ok) {
+        const data = await response.json();
+        // API'den gelen verileri state'e kaydet
+        setHospitals(data);
+      } else {
+        console.error('Failed to fetch states');
+      }
+    } catch (error) {
+      console.error('An error occurred while fetching states:', error);
+    }
+  };
+  const handleRemoveAdmin = async (adminId) => {
+    const confirmation = window.confirm("Are you sure you want to remove this admin?");
+    if(confirmation){
+      try {
+        const response = await fetch(`https://localhost:7050/RemoveAdmin?adminId=${adminId}`, {
+          method: 'DELETE',
+        });
+        if (response.status === 200) {
+          console.log('Admin successfully removed');
+          fetchAdmins(); // Fetch updated admins after successful removal
+        } else {
+          console.error('Failed to remove admin');
+        }
+      } catch (error) {
+        console.error('An error occurred while removing admin:', error);
+      }
+    }
+    
+  };
   const handleEditAdmin = (adminIndex) => {
-    const admin = admins[adminIndex]; // İlgili hastanenin bilgilerini al
+    const admin = admins[adminIndex]; 
     setFormData({
       adminName: admin.name,
       phone: admin.phone,
       mail: admin.mail,
       password: admin.password,
-      hospital : admin.hospital
+      hospital : hospitals.find(hospital => hospital.hospitalId === admin.hospitalId)?.name || ""
     });
-    setEditMode(true); // Düzenleme modunu etkinleştir
-    toggleModal(); // Modalı aç
+    setEditMode(true); 
+    setAdminId(admin.adminId);
+    toggleModal2();
   };
   const toggleModal = () => {
     setShowModal(!showModal);
-
+    
+  };
+  const toggleModal2 = () => {
+    setEditMode(!editMode);
+    
   };
 
   return (
@@ -270,16 +343,70 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                                 <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
                               </div>
                             </div>
-                            <div class="row mb-3">
-                              <label for="inputHospital3" class="col-sm-2 form-label">Hospital ID</label>
-                              <div class="col-sm-10">
-                                <input type="hospital" class="form-control" id="inputHospital" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange} />
-                              </div>
+                            <div className="row mb-3">
+                              
+                              <label htmlFor="inputState" className="form-label">Hospital</label>
+                              <select id="inputState" className="form-select" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange}>
+                                <option value="" >Choose...</option>
+                                {/* State'leri döngü ile doldur */}
+                                {hospitals.map((hospital, index) => (
+                                  <option key={index}>{hospital.name}</option>
+                                ))}
+                              </select>
                             </div>
                           </div>
                           <div className="text-center">
                             <button type="submit" className="btn btn-primary">Submit</button>
                             <button className="btn-close-popup" onClick={toggleModal}>Close</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                  {editMode && (
+                    <div class="xxx">
+                      <div class="popup-box">
+                        <form onSubmit={handleUpdate}>
+                          <div className="row mb-3">
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputText" name="adminName" defaultValue={formData.adminName} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                              <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputText" name="phone" defaultValue={formData.phone} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <div class="col-sm-10">
+                                <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div class="row mb-3">
+                              <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                              <div class="col-sm-10">
+                                <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
+                              </div>
+                            </div>
+                            <div className="row mb-3">
+                              
+                              <label htmlFor="inputState" className="form-label">Hospital</label>
+                              <select id="inputState" className="form-select" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange}>
+                                <option value="" >Choose...</option>
+                                {/* State'leri döngü ile doldur */}
+                                {hospitals.map((hospital, index) => (
+                                  <option key={index}>{hospital.name}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="text-center">
+                            <button type="submit" className="btn btn-primary">Update</button>
+                            <button className="btn-close-popup" onClick={toggleModal2}>Close</button>
                           </div>
                         </form>
                       </div>
@@ -301,14 +428,11 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                         <ul>
                           {admins.map((admin, index) => (
                             <li key={index} className="table-row">
-                              <div className="col col-2" data-label="Hospital Name">{admin.hospitalId}</div>
+                              <div className="col col-2" data-label="Hospital Name">{hospitals.find(hospital => hospital.hospitalId === admin.hospitalId)?.name || ""}</div>
                               <div className="col col-3" data-label="Admin">{admin.name}</div>
                               <div className="col col-4" data-label="Mail">{admin.mail}</div>
                               <div className="col col-5">
                                 <div className="btn-group">
-                                  <a className="btn btn-primary btn-sm" title="Open Admin" href=''>
-                                    <i class="bi bi-eye"></i>
-                                  </a>
                                   <span style={{ marginRight: 10 }} />
                                   <a className="btn btn-primary btn-sm" title="Edit Admin" onClick={() => handleEditAdmin(index)}>
                                     <i className="ri ri-edit-2-fill"></i>
