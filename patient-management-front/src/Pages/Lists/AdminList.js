@@ -15,7 +15,8 @@ const AdminList = () => {
     password: '',
     hospital: ''
   });
-
+  const [editMode, setEditMode] = useState(false);
+const [editHospitalId, setEditHospitalId] = useState(null);
   useEffect(() => {
     fetchAdmins(); // Fetch admins on component mount
   }, []);
@@ -100,7 +101,18 @@ const AdminList = () => {
       console.error('An error occurred while removing admin:', error);
     }
   };
-
+  const handleEditAdmin = (adminIndex) => {
+    const admin = admins[adminIndex]; // İlgili hastanenin bilgilerini al
+    setFormData({
+      adminName: admin.name,
+      phone: admin.phone,
+      mail: admin.mail,
+      password: admin.password,
+      hospital : admin.hospital
+    });
+    setEditMode(true); // Düzenleme modunu etkinleştir
+    toggleModal(); // Modalı aç
+  };
   const toggleModal = () => {
     setShowModal(!showModal);
 
@@ -298,7 +310,7 @@ const AdminList = () => {
                                     <i class="bi bi-eye"></i>
                                   </a>
                                   <span style={{ marginRight: 10 }} />
-                                  <a className="btn btn-primary btn-sm" title="Edit Admin">
+                                  <a className="btn btn-primary btn-sm" title="Edit Admin" onClick={() => handleEditAdmin(index)}>
                                     <i className="ri ri-edit-2-fill"></i>
                                   </a>
                                   <span style={{ marginRight: 10 }} />

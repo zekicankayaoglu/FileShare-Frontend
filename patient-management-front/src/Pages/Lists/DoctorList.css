@@ -9,7 +9,18 @@ body {
     padding-left: 10px;
     padding-right: 10px;
   }
-
+  .xxx{
+    height:410px;
+     width:505px;
+     padding:0;
+     position:absolute;
+     z-index:999;
+     cursor:default;
+     margin-left : 300px;  
+    }
+    .popup-box{
+      width : 650px;
+    }
   h2 {
     font-size: 35px;
     margin: 20px 0;
