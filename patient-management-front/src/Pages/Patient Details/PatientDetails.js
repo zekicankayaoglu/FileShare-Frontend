@@ -9,8 +9,8 @@ const PatientDetails = () => {
     const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
     const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
     const [illnesses, setIllnesses] = useState([{ name: '', description: '' }]);
-    const [medications, setMedications] = useState([{ name: '', dosage: '' }]);
-    const [surgeries, setSurgeries] = useState([{ name: '', details: '' }]);
+    const [medications, setMedications] = useState([{ name: '', description: '' }]);
+    const [surgeries, setSurgeries] = useState([{ name: '', description: '' }]);
     const [preOP, setPreOP] = useState({
         plannedSurgeries: '',
         opDate: '',
@@ -38,6 +38,7 @@ const PatientDetails = () => {
         fetch(`https://localhost:7050/GetMedications/${id}`)
             .then(response => response.json())
             .then(data => setMedications(data))
+            .then(console.log(medications))
             .catch(error => console.error('Error fetching medical history data:', error));
 
         fetch(`https://localhost:7050/GetSurgeries/${id}`)
@@ -53,7 +54,7 @@ const PatientDetails = () => {
     }, [id]); // Fetch data whenever the ID changes
 
     const handleAddMedication = () => {
-        setMedications([...medications, { name: '', dosage: '' }]);
+        setMedications([...medications, { name: '', description: '' }]);
     };
 
     const handleRemoveMedication = index => {
@@ -70,7 +71,7 @@ const PatientDetails = () => {
     };
 
     const handleAddSurgery = () => {
-        setSurgeries([...surgeries, { name: '', details: '' }]);
+        setSurgeries([...surgeries, { name: '', description: '' }]);
     };
 
     const handleRemoveSurgery = index => {
@@ -120,14 +121,14 @@ const PatientDetails = () => {
                         PatientId: id,
                         HistoryType: historyType,
                         Name: item.name || item.type,
-                        Description: item.description || item.dosage || item.details
+                        Description: item.description || item.description || item.description
                     })
                 })
                     .then(response => response.json())
                     .then(data => console.log(data))
                     .catch(error => console.error('Error adding medical history:', error));
 
-                console.log(id, historyType, item.name || item.type, item.description || item.dosage || item.details);
+                console.log(id, historyType, item.name || item.type, item.description || item.description || item.description);
             });
         };
 
@@ -468,9 +469,9 @@ const PatientDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    value={medication.dosage}
+                                                                    value={medication.description}
                                                                     placeholder="Dosage"
-                                                                    name="dosage"
+                                                                    name="description"
                                                                     onChange={e => handleMedicationChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -503,9 +504,9 @@ const PatientDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    value={surgery.details}
+                                                                    value={surgery.description}
                                                                     placeholder="Details"
-                                                                    name="details"
+                                                                    name="description"
                                                                     onChange={e => handleSurgeryChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -542,14 +543,14 @@ const PatientDetails = () => {
                                             <div className="row mb-3">
                                                 <div className="col-lg-12">
                                                     <h6 className="label">Types of Obesity Surgery</h6>
-                                                    {obesitySurgeries.map((surgery, index) => (
+                                                    {obesitySurgeries.map((Obsurgery, index) => (
                                                         <div className="row mb-3" key={index}>
                                                             <div className="col-lg-6">
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
                                                                     name="type"
-                                                                    value={surgery.type}
+                                                                    value={Obsurgery.type}
                                                                     onChange={e => handleObesitySurgeryChange(index, e)}
                                                                     placeholder="Type"
                                                                     disabled={!editable}
@@ -560,7 +561,7 @@ const PatientDetails = () => {
                                                                     type="text"
                                                                     className="form-control"
                                                                     name="description"
-                                                                    value={surgery.description}
+                                                                    value={Obsurgery.description}
                                                                     onChange={e => handleObesitySurgeryChange(index, e)}
                                                                     placeholder="Description"
                                                                     disabled={!editable}
