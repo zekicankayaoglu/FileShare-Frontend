@@ -27,6 +27,16 @@ const PatientDetails = () => {
         anesthesiaNurse: ''
     });
 
+    //OP PROCESS
+    const [OpProcessData, setOpProcessData] = useState({
+        Materials: '',
+        IsIntraop: false,
+        IsDiren: false
+    });
+
+    //OP PROCESS
+
+
     useEffect(() => {
         // Fetch patient data from server using the patient ID
         fetch(`https://localhost:7050/patients/${id}`)
@@ -54,13 +64,23 @@ const PatientDetails = () => {
             .then(response => response.json())
             .then(data => setPreOP(data))
             .catch(error => console.error('Error fetching PreOP data:', error));
+        fetch(`https://localhost:7050/GetOPProcess/${id}`)
+            .then(response => response.json())
+            .then(fetchedData => setOpProcessData(fetchedData))
+            .then(console.log(OpProcessData))
+            .catch(error => {
+                console.error('Error fetching op process:', error);
+            });
 
     }, [id]); // Fetch data whenever the ID changes
-
+    useEffect(() => {
+        // opProcessData güncellendikten sonra loglama yapın
+        console.log(OpProcessData);
+    }, [OpProcessData]);
     const handleAddMedication = () => {
         setMedications([...medications, { name: '', description: '' }]);
     };
-
+    
     const handleRemoveMedication = index => {
         const list = [...medications];
         list.splice(index, 1);
@@ -317,6 +337,14 @@ const PatientDetails = () => {
         setIllnesses(list);
     };
 
+    // Handle OP Process
+    const handleOPProcessChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setOpProcessData(prevData => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
 
     return (
         <div>
@@ -908,49 +936,70 @@ const PatientDetails = () => {
 
 
                                         <div>
-                                            <div className="tab-pane fade pt-3" id="operation-process">
-                                                <div className="row mb-3">
-                                                    <div className="col-lg-11">
-                                                        <h5 className="card-title">Operation Process</h5>
-                                                    </div>
-                                                    <div className="col-lg-1">
-                                                        <div className="btn-group text-end">
-                                                            <button className="btn btn-primary btn-sm edit-btn" title="Edit"><i className="ri ri-edit-2-fill" /></button>
-                                                        </div>
-                                                    </div>
+                                        <div className="tab-pane fade pt-3" id="operation-process">
+                                            <div className="row mb-3">
+                                                <div className="col-lg-11">
+                                                    <h5 className="card-title">Operation Process</h5>
                                                 </div>
-                                                {/* Ameliyat Ekle butonu, Ameliyat Ekibini aktar ve revize */}
-                                                {/* <div class="row mb-3">
-                                          <div class="col-lg-12">
-                                              <button class="btn btn-success">Ameliyat Ekle</button>
-                                          </div>
-                                      </div> */}
-                                                {/* Kullanılan özellikli malzemeler */}
-                                                <div className="row mb-3">
-                                                    <div className="col-lg-12">
-                                                        <h6 className="label">Kullanılan Özellikli Malzemeler</h6>
-                                                        <input type="text" className="form-control" placeholder="Malzemeleri giriniz..." />
-                                                    </div>
-                                                </div>
-                                                {/* Intraop kaçak testi yapıldı mı */}
-                                                <div className="row mb-3">
-                                                    <div className="col-lg-12">
-                                                        <div className="form-check">
-                                                            <input className="form-check-input" type="checkbox" id="intraop-test" />
-                                                            <label className="form-check-label" htmlFor="intraop-test">Intraop kaçak testi yapıldı mı?</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {/* Diren konuldumu */}
-                                                <div className="row mb-3">
-                                                    <div className="col-lg-12">
-                                                        <div className="form-check">
-                                                            <input className="form-check-input" type="checkbox" id="diren" />
-                                                            <label className="form-check-label" htmlFor="diren">Diren konuldumu?</label>
-                                                        </div>
+                                                <div className="col-lg-1">
+                                                    <div className="btn-group text-end">
+                                                        <button className="btn btn-primary btn-sm edit-btn" title="Edit">
+                                                            <i className="ri ri-edit-2-fill" />
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
+                                            {/* Kullanılan özellikli malzemeler */}
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <h6 className="label">Kullanılan Özellikli Malzemeler</h6>
+                                                    <input 
+                                                        type="text" 
+                                                        className="form-control" 
+                                                        placeholder="Malzemeleri giriniz..." 
+                                                        name="Materials"
+                                                        value={OpProcessData.Materials}
+                                                        //onChange={handleOPProcessChange}
+                                                    />
+                                                </div>
+                                            </div>
+                                            {/* Intraop kaçak testi yapıldı mı */}
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <div className="form-check">
+                                                        <input 
+                                                            className="form-check-input" 
+                                                            type="checkbox" 
+                                                            //id="intraop-test" 
+                                                            name="IsIntraop"
+                                                            checked={OpProcessData.IsIntraop}
+                                                            //onChange={handleOPProcessChange}
+                                                        />
+                                                        <label className="form-check-label" htmlFor="intraop-test">
+                                                            Intraop kaçak testi yapıldı mı?
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Diren konuldumu */}
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <div className="form-check">
+                                                        <input 
+                                                            className="form-check-input" 
+                                                            type="checkbox" 
+                                                            id="diren" 
+                                                            name="IsDiren"
+                                                            checked={OpProcessData.IsDiren}
+                                                            //onChange={handleOPProcessChange}
+                                                        />
+                                                        <label className="form-check-label" htmlFor="diren">
+                                                            Diren konuldumu?
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                             <div className="tab-pane fade profile-overview pt-3" id="post-operation">
                                                 <div className="row mb-3">
                                                     <div className="col-lg-11">
