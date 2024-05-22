@@ -3,14 +3,18 @@ import { useParams } from 'react-router-dom';
 import './PatientDetails.css';
 
 const PatientDetails = () => {
-    const { id } = useParams(); // Extract patient ID from URL
+        const { id } = useParams(); // Extract patient ID from URL
     const [patient, setPatient] = useState(null);
+
     const [editable, setEditable] = useState(false);
-    const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
-    const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
+
     const [illnesses, setIllnesses] = useState([{ name: '', description: '' }]);
     const [medications, setMedications] = useState([{ name: '', dosage: '' }]);
     const [surgeries, setSurgeries] = useState([{ name: '', details: '' }]);
+
+    const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
+    const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
+
     const [preOP, setPreOP] = useState({
         plannedSurgeries: '',
         opDate: '',
@@ -108,32 +112,52 @@ const PatientDetails = () => {
 
     const handleSaveChanges = () => {
 
-        const saveMedicalHistory = (historyType, items) => {
-            console.log('History type, items:', historyType, items);
-            items.forEach(item => {
-                fetch('https://localhost:7050/AddMedicalHistory', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        PatientId: id,
-                        HistoryType: historyType,
-                        Name: item.name || item.type,
-                        Description: item.description || item.dosage || item.details
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch(error => console.error('Error adding medical history:', error));
-
-                console.log(id, historyType, item.name || item.type, item.description || item.dosage || item.details);
-            });
+        const saveMedicalHistory = (medicalHistoryArray) => {
+            // Create an array of medical history objects
+        
+            // Send the array to the API
+            fetch('https://localhost:7050/AddMedicalHistory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(medicalHistoryArray)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error adding medical history:', error));
         };
+        
+        var medicalHistoryArray = illnesses.map(item =>
+            ({
+            PatientId: id,
+            HistoryType: "Illness",
+            Name: item.name,
+            Description: item.description || item.dosage || item.details
+        }));
 
-        saveMedicalHistory('Illness', illnesses);
-        saveMedicalHistory('Medication', medications);
-        saveMedicalHistory('Surgery', surgeries);
+        medicalHistoryArray.push(...medications.map(item => ({
+            PatientId: id,
+            HistoryType: "Medication",
+            Name: item.name,
+            Description: item.description || item.dosage || item.details
+        })));
+
+        medicalHistoryArray.push(...surgeries.map(item => ({
+            PatientId: id,
+            HistoryType: "Surgery",
+            Name: item.name,
+            Description: item.description || item.dosage || item.details
+        })));
+
+        var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name && item.Description);
+
+        saveMedicalHistory(medicalHistoryArray);
 
         setEditable(false);
     };
