@@ -5,6 +5,23 @@ import './PatientDetails.css';
 const PatientDetails = () => {
     const { id } = useParams(); // Extract patient ID from URL
     const [patient, setPatient] = useState(null);
+    const [editable, setEditable] = useState(false);
+    const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
+    const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
+    const [illnesses, setIllnesses] = useState([{ name: '', description: '' }]);
+    const [medications, setMedications] = useState([{ name: '', dosage: '' }]);
+    const [surgeries, setSurgeries] = useState([{ name: '', details: '' }]);
+    const [preOP, setPreOP] = useState({
+        plannedSurgeries: '',
+        opDate: '',
+        responsibleSurgeon: '',
+        assistantSurgeon: '',
+        hospital: '',
+        nurse: '',
+        anesthesiologist: '',
+        targetWeight: '',
+        anesthesiaNurse: ''
+    });
 
     useEffect(() => {
         // Fetch patient data from server using the patient ID
@@ -12,14 +29,28 @@ const PatientDetails = () => {
             .then(response => response.json())
             .then(data => setPatient(data))
             .catch(error => console.error('Error fetching patient data:', error));
-    }, [id]); // Fetch data whenever the ID changes
 
-    const [editable, setEditable] = useState(true);
-    const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
-    const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
-    const [illnesses, setIllnesses] = useState([{ name: '', description: '' }]);
-    const [medications, setMedications] = useState([{ name: '', dosage: '' }]);
-    const [surgeries, setSurgeries] = useState([{ name: '', details: '' }]);
+        fetch(`https://localhost:7050/GetIllnesses/${id}`)
+            .then(response => response.json())
+            .then(data => setIllnesses(data))
+            .catch(error => console.error('Error fetching medical history data:', error));
+
+        fetch(`https://localhost:7050/GetMedications/${id}`)
+            .then(response => response.json())
+            .then(data => setMedications(data))
+            .catch(error => console.error('Error fetching medical history data:', error));
+
+        fetch(`https://localhost:7050/GetSurgeries/${id}`)
+            .then(response => response.json())
+            .then(data => setSurgeries(data))
+            .catch(error => console.error('Error fetching medical history data:', error));
+
+        fetch(`https://localhost:7050/GetPreOP/${id}`)
+            .then(response => response.json())
+            .then(data => setPreOP(data))
+            .catch(error => console.error('Error fetching PreOP data:', error));
+
+    }, [id]); // Fetch data whenever the ID changes
 
     const handleAddMedication = () => {
         setMedications([...medications, { name: '', dosage: '' }]);
@@ -76,6 +107,34 @@ const PatientDetails = () => {
     };
 
     const handleSaveChanges = () => {
+
+        const saveMedicalHistory = (historyType, items) => {
+            console.log('History type, items:', historyType, items);
+            items.forEach(item => {
+                fetch('https://localhost:7050/AddMedicalHistory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        PatientId: id,
+                        HistoryType: historyType,
+                        Name: item.name || item.type,
+                        Description: item.description || item.dosage || item.details
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.error('Error adding medical history:', error));
+
+                console.log(id, historyType, item.name || item.type, item.description || item.dosage || item.details);
+            });
+        };
+
+        saveMedicalHistory('Illness', illnesses);
+        saveMedicalHistory('Medication', medications);
+        saveMedicalHistory('Surgery', surgeries);
+
         setEditable(false);
     };
 
@@ -121,7 +180,7 @@ const PatientDetails = () => {
             <header id="header" className="header fixed-top d-flex align-items-center">
                 <div className="d-flex align-items-center justify-content-between">
                     <a href="index.html" className="logo d-flex align-items-center">
-                        <img src="/assets/img/logo.png" alt />
+                        <img src="/assets/img/logo.png" />
                         <span className="d-none d-lg-block">Patient Management</span>
                     </a>
                     <i className="bi bi-list toggle-sidebar-btn" />
@@ -356,6 +415,7 @@ const PatientDetails = () => {
                                                                     className="form-control"
                                                                     value={illness.name}
                                                                     placeholder="Illness Name"
+                                                                    name="name"
                                                                     onChange={e => handleIllnessChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -366,6 +426,7 @@ const PatientDetails = () => {
                                                                     className="form-control"
                                                                     value={illness.description}
                                                                     placeholder="Description"
+                                                                    name="description"
                                                                     onChange={e => handleIllnessChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -398,6 +459,7 @@ const PatientDetails = () => {
                                                                     className="form-control"
                                                                     value={medication.name}
                                                                     placeholder="Medication Name"
+                                                                    name="name"
                                                                     onChange={e => handleMedicationChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -408,6 +470,7 @@ const PatientDetails = () => {
                                                                     className="form-control"
                                                                     value={medication.dosage}
                                                                     placeholder="Dosage"
+                                                                    name="dosage"
                                                                     onChange={e => handleMedicationChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -431,6 +494,7 @@ const PatientDetails = () => {
                                                                     className="form-control"
                                                                     value={surgery.name}
                                                                     placeholder="Surgery Name"
+                                                                    name="name"
                                                                     onChange={e => handleSurgeryChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -441,6 +505,7 @@ const PatientDetails = () => {
                                                                     className="form-control"
                                                                     value={surgery.details}
                                                                     placeholder="Details"
+                                                                    name="details"
                                                                     onChange={e => handleSurgeryChange(index, e)}
                                                                     disabled={!editable}
                                                                 />
@@ -549,14 +614,29 @@ const PatientDetails = () => {
                                             <div className="row mb-3 mt-4">
                                                 <div className="col-lg-6">
                                                     <h6 className="label">Target Weight</h6>
-                                                    <input type="text" className="form-control" placeholder="Target weight information" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="TargetWeight"
+                                                        value={preOP.TargetWeight}
+                                                        onChange={e => setPreOP({ ...preOP, TargetWeight: e.target.value })}
+                                                        placeholder="Target weight information"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                                 <div className="col-lg-6">
                                                     <h6 className="label">Additional Planned Surgeries</h6>
-                                                    <input type="text" className="form-control" placeholder="Additional planned surgeries will be added" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="PlannedSurgeries"
+                                                        value={preOP.PlannedSurgeries}
+                                                        onChange={e => setPreOP({ ...preOP, PlannedSurgeries: e.target.value })}
+                                                        placeholder="Additional planned surgeries will be added"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
-                                            {/* Operation Details */}
                                             <div className="row mb-3 mt-5">
                                                 <div className="col-lg-12">
                                                     <h5 className="label">Operation Details</h5>
@@ -567,7 +647,15 @@ const PatientDetails = () => {
                                                     <p><strong>Planned Operation Dates:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Planned operation dates" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="OpDate"
+                                                        value={preOP.OpDate}
+                                                        onChange={e => setPreOP({ ...preOP, OpDate: e.target.value })}
+                                                        placeholder="Planned operation dates"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -575,7 +663,15 @@ const PatientDetails = () => {
                                                     <p><strong>Responsible Surgeon:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Responsible surgeon" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="ResponsibleSurgeon"
+                                                        value={preOP.ResponsibleSurgeon}
+                                                        onChange={e => setPreOP({ ...preOP, ResponsibleSurgeon: e.target.value })}
+                                                        placeholder="Responsible surgeon"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -583,7 +679,15 @@ const PatientDetails = () => {
                                                     <p><strong>Assistant Surgeon:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Assistant surgeon" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="AssistantSurgeon"
+                                                        value={preOP.AssistantSurgeon}
+                                                        onChange={e => setPreOP({ ...preOP, AssistantSurgeon: e.target.value })}
+                                                        placeholder="Assistant surgeon"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -591,7 +695,15 @@ const PatientDetails = () => {
                                                     <p><strong>Hospital:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Hospital" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="Hospital"
+                                                        value={preOP.Hospital}
+                                                        onChange={e => setPreOP({ ...preOP, Hospital: e.target.value })}
+                                                        placeholder="Hospital"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -599,7 +711,15 @@ const PatientDetails = () => {
                                                     <p><strong>Nurse:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Nurse" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="Nurse"
+                                                        value={preOP.Nurse}
+                                                        onChange={e => setPreOP({ ...preOP, Nurse: e.target.value })}
+                                                        placeholder="Nurse"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -607,7 +727,15 @@ const PatientDetails = () => {
                                                     <p><strong>Anesthesiologist:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Anesthesiologist" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="Anesthesiologist"
+                                                        value={preOP.Anesthesiologist}
+                                                        onChange={e => setPreOP({ ...preOP, Anesthesiologist: e.target.value })}
+                                                        placeholder="Anesthesiologist"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -615,9 +743,19 @@ const PatientDetails = () => {
                                                     <p><strong>Anesthesia Nurse:</strong></p>
                                                 </div>
                                                 <div className="col-lg-9">
-                                                    <input type="text" className="form-control" placeholder="Anesthesia nurse" disabled={!editable} />
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="AnesthesiaNurse"
+                                                        value={preOP.AnesthesiaNurse}
+                                                        onChange={e => setPreOP({ ...preOP, AnesthesiaNurse: e.target.value })}
+                                                        placeholder="Anesthesia nurse"
+                                                        disabled={!editable}
+                                                    />
                                                 </div>
                                             </div>
+
+
                                             {/* Save Changes Button */}
                                             {editable && <button className="btn btn-success" onClick={handleSaveChanges}>Save Changes</button>}
                                         </div>
