@@ -8,9 +8,9 @@ const PatientDetails = () => {
 
     const [editable, setEditable] = useState(false);
 
-    const [illnesses, setIllnesses] = useState([{ name: '', description: '' }]);
-    const [medications, setMedications] = useState([{ name: '', description: '' }]);
-    const [surgeries, setSurgeries] = useState([{ name: '', description: '' }]);
+    var [illnesses, setIllnesses] = useState([{ name: '', description: '' }]);
+    var [medications, setMedications] = useState([{ name: '', description: '' }]);
+    var [surgeries, setSurgeries] = useState([{ name: '', description: '' }]);
 
     const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
     const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
@@ -112,12 +112,12 @@ const PatientDetails = () => {
     };
 
     const handleSaveChanges = () => {
-
-        const saveMedicalHistory = (medicalHistoryArray) => {
+        // Medical History Saving
+        const saveMedicalHistory = (medicalHistoryArray, id) => {
             // Create an array of medical history objects
-        
+
             // Send the array to the API
-            fetch('https://localhost:7050/AddMedicalHistory', {
+            fetch(`https://localhost:7050/AddMedicalHistory/${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -134,6 +134,33 @@ const PatientDetails = () => {
             .catch(error => console.error('Error adding medical history:', error));
         };
         
+        // Filter out the illnesses that do not have a name
+        illnesses = illnesses.filter(item => item.name);
+
+        // Check inside the illnesses if there is any empty description and if so, make it '-'. 
+        illnesses.forEach(item => {
+            if (!item.description) {
+                item.description = '-';
+            }
+        });
+
+        medications = medications.filter(item => item.name);
+
+        medications.forEach(item => {
+            if (!item.description) {
+                item.description = '-';
+            }
+        });
+
+        surgeries = surgeries.filter(item => item.name);
+
+        surgeries.forEach(item => {
+            if (!item.description) {
+                item.description = '-';
+            }
+        });
+
+
         var medicalHistoryArray = illnesses.map(item =>
             ({
             PatientId: id,
@@ -156,10 +183,102 @@ const PatientDetails = () => {
             Description: item.description || item.dosage || item.details
         })));
 
-        var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name && item.Description);
+        var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name);
 
-        saveMedicalHistory(medicalHistoryArray);
+        saveMedicalHistory(medicalHistoryArray, id);
 
+
+        // PreOP Saving
+        const savePreOP = (preOP, obesitySurgeries, consultedDepartments, id) => {
+            // Create an array of medical history objects
+        
+            fetch(`https://localhost:7050/AddPreOP/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(preOP)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error adding PreOP:', error));
+
+            fetch(`https://localhost:7050/AddObesitySurgery/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(obesitySurgeries)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error adding PreOP:', error));
+
+            fetch(`https://localhost:7050/AddDepartment/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(consultedDepartments)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error adding PreOP:', error));
+        };
+
+        obesitySurgeries = obesitySurgeries.filter(item => item.type);
+
+        obesitySurgeries.forEach(item => {
+            if (!item.description) {
+                item.description = '-';
+            }
+        });
+
+        var obesitySurgeriesArray = obesitySurgeries.map(item =>
+            ({
+                PreOPId: id,
+                Surgery: item.type,
+                SurgeryDetails: item.description
+        }));
+
+
+        surgeries = surgeries.filter(item => item.name);
+
+        surgeries.forEach(item => {
+            if (!item.description) {
+                item.description = '-';
+            }
+        });
+
+
+        var medicalHistoryArray = illnesses.map(item =>
+            ({
+            PatientId: id,
+            HistoryType: "Illness",
+            Name: item.name,
+            Description: item.description || item.dosage || item.details
+        }));
+
+
+        var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name);
+
+        savePreOP(preOP, obesitySurgeriesArray, consultedDepartments, id);
+        
         setEditable(false);
     };
 
