@@ -29,9 +29,9 @@ const PatientDetails = () => {
 
     //OP PROCESS
     const [OpProcessData, setOpProcessData] = useState({
-        Materials: '',
-        IsIntraop: false,
-        IsDiren: false
+        aterials: '',
+        isIntraop: false,
+        isDiren: false
     });
 
     //OP PROCESS
@@ -64,19 +64,18 @@ const PatientDetails = () => {
             .then(response => response.json())
             .then(data => setPreOP(data))
             .catch(error => console.error('Error fetching PreOP data:', error));
-        fetch(`https://localhost:7050/GetOPProcess/${id}`)
+            fetch(`https://localhost:7050/GetOPProcess/${id}`)
             .then(response => response.json())
-            .then(fetchedData => setOpProcessData(fetchedData))
-            .then(console.log(OpProcessData))
+            .then(fetchedData => {
+                setOpProcessData(fetchedData);
+                console.log(fetchedData); // Doğru yerde loglama yapılıyor
+            })
             .catch(error => {
                 console.error('Error fetching op process:', error);
             });
 
     }, [id]); // Fetch data whenever the ID changes
-    useEffect(() => {
-        // opProcessData güncellendikten sonra loglama yapın
-        console.log(OpProcessData);
-    }, [OpProcessData]);
+
     const handleAddMedication = () => {
         setMedications([...medications, { name: '', description: '' }]);
     };
@@ -340,11 +339,36 @@ const PatientDetails = () => {
     // Handle OP Process
     const handleOPProcessChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setOpProcessData(prevData => ({
-            ...prevData,
+        setOpProcessData(prevState => ({
+            ...prevState,
             [name]: type === 'checkbox' ? checked : value
         }));
+        setIsModified(true);
     };
+    //op process ismodified
+    const [isModified, setIsModified] = useState(false);
+
+    const saveOPProcess = () => {
+        fetch(`https://localhost:7050/AddOPProcess/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(OpProcessData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Success: Operation process updated successfully.');
+                    setIsModified(false);
+                } else {
+                    console.error('Error updating op process: ', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating op process:', error);
+            });
+    };
+
 
     return (
         <div>
@@ -933,20 +957,10 @@ const PatientDetails = () => {
                                         </div>
 
 
-
-
-                                        <div>
                                         <div className="tab-pane fade pt-3" id="operation-process">
                                             <div className="row mb-3">
                                                 <div className="col-lg-11">
                                                     <h5 className="card-title">Operation Process</h5>
-                                                </div>
-                                                <div className="col-lg-1">
-                                                    <div className="btn-group text-end">
-                                                        <button className="btn btn-primary btn-sm edit-btn" title="Edit">
-                                                            <i className="ri ri-edit-2-fill" />
-                                                        </button>
-                                                    </div>
                                                 </div>
                                             </div>
                                             {/* Kullanılan özellikli malzemeler */}
@@ -957,9 +971,9 @@ const PatientDetails = () => {
                                                         type="text" 
                                                         className="form-control" 
                                                         placeholder="Malzemeleri giriniz..." 
-                                                        name="Materials"
-                                                        value={OpProcessData.Materials}
-                                                        //onChange={handleOPProcessChange}
+                                                        name="materials"
+                                                        value={OpProcessData.materials}
+                                                        onChange={handleOPProcessChange}
                                                     />
                                                 </div>
                                             </div>
@@ -971,9 +985,9 @@ const PatientDetails = () => {
                                                             className="form-check-input" 
                                                             type="checkbox" 
                                                             //id="intraop-test" 
-                                                            name="IsIntraop"
-                                                            checked={OpProcessData.IsIntraop}
-                                                            //onChange={handleOPProcessChange}
+                                                            name="isIntraop"
+                                                            checked={OpProcessData.isIntraop}
+                                                            onChange={handleOPProcessChange}
                                                         />
                                                         <label className="form-check-label" htmlFor="intraop-test">
                                                             Intraop kaçak testi yapıldı mı?
@@ -989,9 +1003,9 @@ const PatientDetails = () => {
                                                             className="form-check-input" 
                                                             type="checkbox" 
                                                             id="diren" 
-                                                            name="IsDiren"
-                                                            checked={OpProcessData.IsDiren}
-                                                            //onChange={handleOPProcessChange}
+                                                            name="isDiren"
+                                                            checked={OpProcessData.isDiren}
+                                                            onChange={handleOPProcessChange}
                                                         />
                                                         <label className="form-check-label" htmlFor="diren">
                                                             Diren konuldumu?
@@ -999,8 +1013,17 @@ const PatientDetails = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            {isModified && (
+                                                <div className="row mb-3">
+                                                    <div className="col-lg-12 text-end">
+                                                        <button className="btn btn-success" onClick={saveOPProcess}>
+                                                            Kaydet
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                            <div className="tab-pane fade profile-overview pt-3" id="post-operation">
+                                            <div className="tab-pane fade pt-3" id="post-operation">
                                                 <div className="row mb-3">
                                                     <div className="col-lg-11">
                                                         <h5 className="card-title">POST OP Takip Süreci</h5>
@@ -1190,7 +1213,7 @@ const PatientDetails = () => {
                                 </div>
                             </div>
                         </div>
-                    </div></section>
+                    </section>
             </main>{/* End #main */}
             {/* ======= Footer ======= */}
             <footer id="footer" className="footer">
