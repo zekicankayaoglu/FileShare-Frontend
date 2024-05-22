@@ -642,8 +642,8 @@ const PatientDetails = () => {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        name="TargetWeight"
-                                                        value={preOP.TargetWeight}
+                                                        name="targetWeight"
+                                                        value={preOP.targetWeight}
                                                         onChange={e => setPreOP({ ...preOP, TargetWeight: e.target.value })}
                                                         placeholder="Target weight information"
                                                         disabled={!editable}
@@ -654,9 +654,9 @@ const PatientDetails = () => {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        name="PlannedSurgeries"
-                                                        value={preOP.PlannedSurgeries}
-                                                        onChange={e => setPreOP({ ...preOP, PlannedSurgeries: e.target.value })}
+                                                        name="plannedSurgeries"
+                                                        value={preOP.plannedSurgeries}
+                                                        onChange={e => setPreOP({ ...preOP, plannedSurgeries: e.target.value })}
                                                         placeholder="Additional planned surgeries will be added"
                                                         disabled={!editable}
                                                     />
@@ -675,9 +675,9 @@ const PatientDetails = () => {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        name="OpDate"
-                                                        value={preOP.OpDate}
-                                                        onChange={e => setPreOP({ ...preOP, OpDate: e.target.value })}
+                                                        name="opDate"
+                                                        value={preOP.opDate}
+                                                        onChange={e => setPreOP({ ...preOP, opDate: e.target.value })}
                                                         placeholder="Planned operation dates"
                                                         disabled={!editable}
                                                     />
@@ -691,9 +691,9 @@ const PatientDetails = () => {
                                                     <input
                                                         type="text"
                                                         className="form-control"
-                                                        name="ResponsibleSurgeon"
-                                                        value={preOP.ResponsibleSurgeon}
-                                                        onChange={e => setPreOP({ ...preOP, ResponsibleSurgeon: e.target.value })}
+                                                        name="responsibleSurgeon"
+                                                        value={preOP.responsibleSurgeon}
+                                                        onChange={e => setPreOP({ ...preOP, responsibleSurgeon: e.target.value })}
                                                         placeholder="Responsible surgeon"
                                                         disabled={!editable}
                                                     />
@@ -708,8 +708,8 @@ const PatientDetails = () => {
                                                         type="text"
                                                         className="form-control"
                                                         name="AssistantSurgeon"
-                                                        value={preOP.AssistantSurgeon}
-                                                        onChange={e => setPreOP({ ...preOP, AssistantSurgeon: e.target.value })}
+                                                        value={preOP.assistantSurgeon}
+                                                        onChange={e => setPreOP({ ...preOP, assistantSurgeon: e.target.value })}
                                                         placeholder="Assistant surgeon"
                                                         disabled={!editable}
                                                     />
@@ -724,8 +724,8 @@ const PatientDetails = () => {
                                                         type="text"
                                                         className="form-control"
                                                         name="Hospital"
-                                                        value={preOP.Hospital}
-                                                        onChange={e => setPreOP({ ...preOP, Hospital: e.target.value })}
+                                                        value={preOP.hospital}
+                                                        onChange={e => setPreOP({ ...preOP, hospital: e.target.value })}
                                                         placeholder="Hospital"
                                                         disabled={!editable}
                                                     />
@@ -740,8 +740,8 @@ const PatientDetails = () => {
                                                         type="text"
                                                         className="form-control"
                                                         name="Nurse"
-                                                        value={preOP.Nurse}
-                                                        onChange={e => setPreOP({ ...preOP, Nurse: e.target.value })}
+                                                        value={preOP.nurse}
+                                                        onChange={e => setPreOP({ ...preOP, nurse: e.target.value })}
                                                         placeholder="Nurse"
                                                         disabled={!editable}
                                                     />
@@ -756,8 +756,8 @@ const PatientDetails = () => {
                                                         type="text"
                                                         className="form-control"
                                                         name="Anesthesiologist"
-                                                        value={preOP.Anesthesiologist}
-                                                        onChange={e => setPreOP({ ...preOP, Anesthesiologist: e.target.value })}
+                                                        value={preOP.anesthesiologist}
+                                                        onChange={e => setPreOP({ ...preOP, anesthesiologist: e.target.value })}
                                                         placeholder="Anesthesiologist"
                                                         disabled={!editable}
                                                     />
@@ -772,8 +772,8 @@ const PatientDetails = () => {
                                                         type="text"
                                                         className="form-control"
                                                         name="AnesthesiaNurse"
-                                                        value={preOP.AnesthesiaNurse}
-                                                        onChange={e => setPreOP({ ...preOP, AnesthesiaNurse: e.target.value })}
+                                                        value={preOP.anesthesiaNurse}
+                                                        onChange={e => setPreOP({ ...preOP, anesthesiaNurse: e.target.value })}
                                                         placeholder="Anesthesia nurse"
                                                         disabled={!editable}
                                                     />
