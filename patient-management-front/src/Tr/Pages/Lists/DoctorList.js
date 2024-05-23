@@ -199,15 +199,15 @@ const DoctorList = () => {
       <aside id="sidebar" className="sidebar">
         <ul className="sidebar-nav" id="sidebar-nav">
           <li className="nav-item">
-            <a className="nav-link collapse" href="/doctors">
+            <a className="nav-link collapse" href="/tr/doctors">
               <i className="bi bi-person"></i>
-              <span>Doctors</span>
+              <span>Doktorlar</span>
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link collapsed" href="/login-form">
+            <a className="nav-link collapsed" href="/tr/login-form">
               <i className="bi bi-box-arrow-in-right"></i>
-              <span>Logout</span>
+              <span>Çıkış Yap</span>
             </a>
           </li>
         </ul>
@@ -222,8 +222,8 @@ const DoctorList = () => {
               <div className="row">
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
-                    <h2>DOCTORS</h2>
-                    <button className="button-33" role="button" onClick={toggleModal}>Add New Doctor</button>
+                    <h2>DOKTORLAR</h2>
+                    <button className="button-33" role="button" onClick={toggleModal}>Yeni Doktor Ekle</button>
                   </div>
                   {showModal && (
                     <div class="xxx">
@@ -231,39 +231,39 @@ const DoctorList = () => {
                         <form onSubmit={handleSubmit}>
                           <div className="row mb-3">
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Doctor Name</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Doktor</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputName" name="doctorName" defaultValue={formData.doctorName} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Telefon</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputPhone" name="phone" defaultValue={formData.phone} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Mail</label>
                               <div class="col-sm-10">
                                 <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                              <label for="inputPassword3" class="col-sm-2 form-label">Şifre</label>
                               <div class="col-sm-10">
                                 <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Hastane</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputHospital" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange} />
                               </div>
                             </div>
                           </div>
                           <div className="text-center">
-                            <button type="submit" className="btn btn-primary">Submit</button>
-                            <button className="btn-close-popup" onClick={toggleModal}>Close</button>
+                            <button type="submit" className="btn btn-primary">Kaydet</button>
+                            <button className="btn-close-popup" onClick={toggleModal}>Kapat</button>
                           </div>
                         </form>
                       </div>
@@ -271,14 +271,14 @@ const DoctorList = () => {
                   )}
                   <ul className="responsive-table">
                     <li className="table-header">
-                      <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Doctor Name</div>
+                      <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Doktor</div>
                       <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Mail
                       </div>
-                      <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Phone
+                      <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Telefon
                       </div>
                       <div className="col col-5">
                                 
-                              </div>
+                      </div>
                     </li>
                     <div>
                       {doctors === null ? (

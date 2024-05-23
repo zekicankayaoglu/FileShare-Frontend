@@ -282,21 +282,21 @@ const [editHospitalId, setEditHospitalId] = useState(null);
         <ul className="sidebar-nav" id="sidebar-nav">
 
           <li className="nav-item">
-            <a className="nav-link collapsed" href="/hospitals">
+            <a className="nav-link collapsed" href="/tr/hospitals">
               <i className="ri ri-building-4-line"></i>
-              <span>Hospitals</span>
+              <span>Hastaneler</span>
             </a>
           </li>
           <li className="nav-item">
             <a className="nav-link" href="/admins">
               <i className="bi bi-person"></i>
-              <span>Admins</span>
+              <span>Yöneticiler</span>
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link collapsed" href="/login-form">
+            <a className="nav-link collapsed" href="/tr/login-form">
               <i className="bi bi-box-arrow-in-right"></i>
-              <span>Logout</span>
+              <span>Çıkış Yap</span>
             </a>
           </li>
         </ul>
@@ -311,8 +311,8 @@ const [editHospitalId, setEditHospitalId] = useState(null);
               <div className="row">
                 <div className="container">
                   <div className="d-flex justify-content-between align-items-center">
-                    <h2>ADMINS</h2>
-                    <button className="button-33" role="button" onClick={toggleModal}>Add New Admin</button>
+                    <h2>YÖNETİCİLER</h2>
+                    <button className="button-33" role="button" onClick={toggleModal}>Yönetici Ekle</button>
                   </div>
                   {showModal && (
                     <div class="xxx">
@@ -320,32 +320,32 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                         <form onSubmit={handleSubmit}>
                           <div className="row mb-3">
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Yönetici İsmi</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputText" name="adminName" defaultValue={formData.adminName} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Telefon</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputText" name="phone" defaultValue={formData.phone} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Mail</label>
                               <div class="col-sm-10">
                                 <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                              <label for="inputPassword3" class="col-sm-2 form-label">Şifre</label>
                               <div class="col-sm-10">
                                 <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div className="row mb-3">
                               
-                              <label htmlFor="inputState" className="form-label">Hospital</label>
+                              <label htmlFor="inputState" className="form-label">Hastane</label>
                               <select id="inputState" className="form-select" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange}>
                                 <option value="" >Choose...</option>
                                 {/* State'leri döngü ile doldur */}
@@ -356,8 +356,8 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                             </div>
                           </div>
                           <div className="text-center">
-                            <button type="submit" className="btn btn-primary">Submit</button>
-                            <button className="btn-close-popup" onClick={toggleModal}>Close</button>
+                            <button type="submit" className="btn btn-primary">Kaydet</button>
+                            <button className="btn-close-popup" onClick={toggleModal}>Kapat</button>
                           </div>
                         </form>
                       </div>
@@ -369,32 +369,32 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                         <form onSubmit={handleUpdate}>
                           <div className="row mb-3">
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Admin Name</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Yönetici İsmi</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputText" name="adminName" defaultValue={formData.adminName} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Phone</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Telefon</label>
                               <div class="col-sm-10">
                                 <input type="text" class="form-control" id="inputText" name="phone" defaultValue={formData.phone} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                              <label for="inputEmail3" class="col-sm-2 col-form-label">Mail</label>
                               <div class="col-sm-10">
                                 <input type="email" class="form-control" id="inputEmail" name="mail" defaultValue={formData.mail} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div class="row mb-3">
-                              <label for="inputPassword3" class="col-sm-2 form-label">Password</label>
+                              <label for="inputPassword3" class="col-sm-2 form-label">Şifre</label>
                               <div class="col-sm-10">
                                 <input type="password" class="form-control" id="inputPassword" name="password" defaultValue={formData.password} onChange={handleInputChange} />
                               </div>
                             </div>
                             <div className="row mb-3">
                               
-                              <label htmlFor="inputState" className="form-label">Hospital</label>
+                              <label htmlFor="inputState" className="form-label">Hastane</label>
                               <select id="inputState" className="form-select" name="hospital" defaultValue={formData.hospital} onChange={handleInputChange}>
                                 <option value="" >Choose...</option>
                                 {/* State'leri döngü ile doldur */}
@@ -405,7 +405,7 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                             </div>
                           </div>
                           <div className="text-center">
-                            <button type="submit" className="btn btn-primary">Update</button>
+                            <button type="submit" className="btn btn-primary">Kaydet</button>
                             <button className="btn-close-popup" onClick={toggleModal2}>Close</button>
                           </div>
                         </form>
@@ -414,8 +414,8 @@ const [editHospitalId, setEditHospitalId] = useState(null);
                   )}
                   <ul className="responsive-table">
                     <li className="table-header">
-                      <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Hospital</div>
-                      <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Admin
+                      <div className="col col-2"><i className="ri ri-building-4-line"></i><span style={{ marginRight: '10px' }}></span>Hastane</div>
+                      <div className="col col-3"><i className="bi bi-person-fill"></i><span style={{ marginRight: '10px' }}></span>Yönetici
                       </div>
                       <div className="col col-4"><i className="ri  ri-mail-line"></i><span style={{ marginRight: '10px' }}></span>Mail
                       </div>
