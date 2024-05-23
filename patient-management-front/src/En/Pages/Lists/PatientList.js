@@ -38,7 +38,7 @@ function PatientList() {
       <header id="header" className="header fixed-top d-flex align-items-center">
         <div className="d-flex align-items-center justify-content-between">
           <a href="" className="logo d-flex align-items-center">
-            <img src="assets/img/logo.png" alt />
+            <img src="/assets/img/logo.png" alt />
             <span className="d-none d-lg-block">Patient Management</span>
           </a>
           <i className="bi bi-list toggle-sidebar-btn" />
@@ -68,7 +68,7 @@ function PatientList() {
             </li>{/* End Notification Nav */}
             <li className="nav-item dropdown pe-3">
               <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                <img src="assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
+                <img src="/assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
                 <span className="d-none d-md-block dropdown-toggle ps-2">Doctor</span>
               </a>{/* End Profile Iamge Icon */}
               <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -121,13 +121,13 @@ function PatientList() {
       <aside id="sidebar" className="sidebar">
         <ul className="sidebar-nav" id="sidebar-nav">
           <li className="nav-item">
-            <a className="nav-link collapse" href="/patients">
+            <a className="nav-link collapse" href="/en/patients">
               <i className="bi bi-person"></i>
               <span>Patients</span>
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link collapsed" href="/login-form">
+            <a className="nav-link collapsed" href="/en/login-form">
               <i className="bi bi-box-arrow-in-right"></i>
               <span>Logout</span>
             </a>
@@ -165,7 +165,7 @@ function PatientList() {
                                 <div className="col col-4" data-label="Mail">{patient.phone}</div>
                                 <div className="col col-5">
                                     <div className="btn-group">
-                                        <a className="btn btn-primary btn-sm" title="Open Patient" href={`/patients/${patient.patientId}`}>
+                                        <a className="btn btn-primary btn-sm" title="Open Patient" href={`/en/patients/${patient.patientId}`}>
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <span style={{marginRight: 10}} />

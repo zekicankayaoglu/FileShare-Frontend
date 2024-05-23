@@ -12,8 +12,8 @@ const PatientDetails = () => {
     var [medications, setMedications] = useState([{ name: '', description: '' }]);
     var [surgeries, setSurgeries] = useState([{ name: '', description: '' }]);
 
-    var [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
-    var [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
+    var [obesitySurgeries, setObesitySurgeries] = useState([{ surgery: '', surgeryDetails: '' }]);
+    var [consultedDepartments, setConsultedDepartments] = useState([{ departmentName: '', departmentDescription: '' }]);
 
     const [preOP, setPreOP] = useState({
         plannedSurgeries: '',
@@ -60,11 +60,22 @@ const PatientDetails = () => {
             .then(data => setSurgeries(data))
             .catch(error => console.error('Error fetching medical history data:', error));
 
+        fetch(`https://localhost:7050/GetObesitySurgeries/${id}`)
+            .then(response => response.json())
+            .then(data => setObesitySurgeries(data))
+            .catch(error => console.error('Error fetching PreOP data:', error));
+
+        fetch(`https://localhost:7050/GetDepartments/${id}`)
+            .then(response => response.json())
+            .then(data => setConsultedDepartments(data))
+            .catch(error => console.error('Error fetching PreOP data:', error));
+
         fetch(`https://localhost:7050/GetPreOP/${id}`)
             .then(response => response.json())
             .then(data => setPreOP(data))
             .catch(error => console.error('Error fetching PreOP data:', error));
-            fetch(`https://localhost:7050/GetOPProcess/${id}`)
+        
+        fetch(`https://localhost:7050/GetOPProcess/${id}`)
             .then(response => response.json())
             .then(fetchedData => {
                 setOpProcessData(fetchedData);
@@ -109,13 +120,12 @@ const PatientDetails = () => {
         list[index][name] = value;
         setSurgeries(list);
     };
-
     const handleAddObesitySurgery = () => {
-        setObesitySurgeries([...obesitySurgeries, { type: '', description: '' }]);
+        setObesitySurgeries([...obesitySurgeries, { surgery: '', surgeryDetails: '' }]);
     };
 
     const handleAddConsultedDepartment = () => {
-        setConsultedDepartments([...consultedDepartments, { department: '', description: '' }]);
+        setConsultedDepartments([...consultedDepartments, { departmentName: '', departmentDescription: '' }]);
     };
 
     const handleRemoveObesitySurgery = index => {
@@ -163,6 +173,8 @@ const PatientDetails = () => {
             }
         });
 
+        setIllnesses(illnesses);
+
         medications = medications.filter(item => item.name);
 
         medications.forEach(item => {
@@ -171,6 +183,8 @@ const PatientDetails = () => {
             }
         });
 
+        setMedications(medications);
+
         surgeries = surgeries.filter(item => item.name);
 
         surgeries.forEach(item => {
@@ -178,6 +192,8 @@ const PatientDetails = () => {
                 item.description = '-';
             }
         });
+
+        setSurgeries(surgeries);
 
 
         var medicalHistoryArray = illnesses.map(item =>
@@ -205,7 +221,6 @@ const PatientDetails = () => {
         var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name);
 
         saveMedicalHistory(medicalHistoryArray, id);
-
 
         // PreOP Saving
         const savePreOP = (preOP, obesitySurgeries, consultedDepartments, id) => {
@@ -260,36 +275,39 @@ const PatientDetails = () => {
             .catch(error => console.error('Error adding PreOP:', error));
         };
 
-        obesitySurgeries = obesitySurgeries.filter(item => item.type);
+        obesitySurgeries = obesitySurgeries.filter(item => item.surgery);
 
         obesitySurgeries.forEach(item => {
-            if (!item.description) {
-                item.description = '-';
+            if (!item.surgeryDetails) {
+                item.surgeryDetails = '-';
             }
         });
 
         var obesitySurgeriesArray = obesitySurgeries.map(item =>
             ({
-                Surgery: item.type,
-                SurgeryDetails: item.description
+                Surgery: item.surgery,
+                SurgeryDetails: item.surgeryDetails
         }));
 
-        consultedDepartments = consultedDepartments.filter(item => item.department);
+        consultedDepartments = consultedDepartments.filter(item => item.departmentName);
 
         consultedDepartments.forEach(item => {
-            if (!item.description) {
-                item.description = '-';
+            if (!item.departmentDescription) {
+                item.departmentDescription = '-';
             }
         });
 
         var consultedDepartmentsArray = consultedDepartments.map(item =>
             ({
-                DepartmentName: item.department,
-                DepartmentDescription: item.description
+                DepartmentName: item.departmentName,
+                DepartmentDescription: item.departmentDescription
         }));
 
         savePreOP(preOP, obesitySurgeriesArray, consultedDepartmentsArray, id);
         
+        setConsultedDepartments(consultedDepartments);
+        setObesitySurgeries(obesitySurgeries);
+
         setEditable(false);
     };
 
@@ -441,7 +459,7 @@ const PatientDetails = () => {
             <aside id="sidebar" className="sidebar">
                 <ul className="sidebar-nav" id="sidebar-nav">
                     <li className="nav-item">
-                        <a className="nav-link collapsed" href="/patients">
+                        <a className="nav-link collapsed" href="/en/patients">
                             <i className="bi bi-person" />
                             <span>Patients</span>
                         </a>
@@ -453,7 +471,7 @@ const PatientDetails = () => {
                         </a>
                     </li>
                     <li className="nav-item">
-                        <a className="nav-link collapsed" href="/login-form">
+                        <a className="nav-link collapsed" href="/en/login-form">
                             <i className="bi bi-box-arrow-in-right" />
                             <span>Logout</span>
                         </a>
@@ -499,7 +517,7 @@ const PatientDetails = () => {
             <div class="card">
                 <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                <img src="/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
                 <h2>Mustafa Dereci</h2>
                 <h3>Male</h3>
                 </div>
@@ -736,8 +754,8 @@ const PatientDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name="type"
-                                                                    value={Obsurgery.type}
+                                                                    name="surgery"
+                                                                    value={Obsurgery.surgery}
                                                                     onChange={e => handleObesitySurgeryChange(index, e)}
                                                                     placeholder="Type"
                                                                     disabled={!editable}
@@ -747,8 +765,8 @@ const PatientDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name="description"
-                                                                    value={Obsurgery.description}
+                                                                    name="surgeryDetails"
+                                                                    value={Obsurgery.surgeryDetails}
                                                                     onChange={e => handleObesitySurgeryChange(index, e)}
                                                                     placeholder="Description"
                                                                     disabled={!editable}
@@ -772,8 +790,8 @@ const PatientDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name="department"
-                                                                    value={department.department}
+                                                                    name="departmentName"
+                                                                    value={department.departmentName}
                                                                     onChange={e => handleConsultedDepartmentChange(index, e)}
                                                                     placeholder="Department"
                                                                     disabled={!editable}
@@ -783,8 +801,8 @@ const PatientDetails = () => {
                                                                 <input
                                                                     type="text"
                                                                     className="form-control"
-                                                                    name="description"
-                                                                    value={department.description}
+                                                                    name="departmentDescription"
+                                                                    value={department.departmentDescription}
                                                                     onChange={e => handleConsultedDepartmentChange(index, e)}
                                                                     placeholder="Description"
                                                                     disabled={!editable}

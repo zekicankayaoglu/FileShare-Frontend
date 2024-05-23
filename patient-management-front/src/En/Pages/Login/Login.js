@@ -36,11 +36,11 @@ const LoginForm = () => {
         const userID = responseData.userId;
         localStorage.setItem('user', userID);
         if (userID === 0) {
-          navigate('/admins');
+          navigate('/en/admins');
       } else if (responseData.userType === "admin") {
-          navigate('/doctors');
+          navigate('/en/doctors');
       } else {
-          navigate('/patients');
+          navigate('/en/patients');
       }
       } else {
         console.error('Login failed');
@@ -64,8 +64,11 @@ const LoginForm = () => {
     setErrorMessage('');
   };
 
-  return (
+  return  (
     <div className="container">
+      <div className="language-switcher">
+        <span className="fi fi-tr" onClick={() => navigate('/tr/login-form')}></span>
+      </div>
       <section className="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
         <div className="container">
           <div className="row justify-content-center">

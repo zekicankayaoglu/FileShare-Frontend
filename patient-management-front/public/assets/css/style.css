@@ -1180,6 +1180,20 @@ h6 {
   color: #fff; /* Maintain white text color on hover */
 }
 
+
+.language-switcher {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+}
+
+.language-switcher .fi {
+  margin-top: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+
 @keyframes animate-loading {
   0% {
     transform: rotate(0deg);

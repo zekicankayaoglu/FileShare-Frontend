@@ -116,7 +116,7 @@ const DoctorList = () => {
       <header id="header" className="header fixed-top d-flex align-items-center">
         <div className="d-flex align-items-center justify-content-between">
           <a href="index.html" className="logo d-flex align-items-center">
-            <img src="assets/img/logo.png" alt />
+            <img src="/assets/img/logo.png" alt />
             <span className="d-none d-lg-block">Patient Management</span>
           </a>
           <i className="bi bi-list toggle-sidebar-btn" />
@@ -146,7 +146,7 @@ const DoctorList = () => {
             </li>{/* End Notification Nav */}
             <li className="nav-item dropdown pe-3">
               <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                <img src="assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
+                <img src="/assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
                 <span className="d-none d-md-block dropdown-toggle ps-2">Admin</span>
               </a>{/* End Profile Iamge Icon */}
               <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -199,13 +199,13 @@ const DoctorList = () => {
       <aside id="sidebar" className="sidebar">
         <ul className="sidebar-nav" id="sidebar-nav">
           <li className="nav-item">
-            <a className="nav-link collapse" href="/doctors">
+            <a className="nav-link collapse" href="/en/doctors">
               <i className="bi bi-person"></i>
               <span>Doctors</span>
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link collapsed" href="/login-form">
+            <a className="nav-link collapsed" href="/en/login-form">
               <i className="bi bi-box-arrow-in-right"></i>
               <span>Logout</span>
             </a>
