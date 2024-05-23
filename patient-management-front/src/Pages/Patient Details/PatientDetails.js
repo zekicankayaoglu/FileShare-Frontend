@@ -12,8 +12,8 @@ const PatientDetails = () => {
     var [medications, setMedications] = useState([{ name: '', description: '' }]);
     var [surgeries, setSurgeries] = useState([{ name: '', description: '' }]);
 
-    const [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
-    const [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
+    var [obesitySurgeries, setObesitySurgeries] = useState([{ type: '', description: '' }]);
+    var [consultedDepartments, setConsultedDepartments] = useState([{ department: '', description: '' }]);
 
     const [preOP, setPreOP] = useState({
         plannedSurgeries: '',
@@ -186,21 +186,21 @@ const PatientDetails = () => {
             PatientId: id,
             HistoryType: "Illness",
             Name: item.name,
-            Description: item.description || item.dosage || item.details
+            Description: item.description
         }));
 
         medicalHistoryArray.push(...medications.map(item => ({
             PatientId: id,
             HistoryType: "Medication",
             Name: item.name,
-            Description: item.description || item.dosage || item.details
+            Description: item.description
         })));
 
         medicalHistoryArray.push(...surgeries.map(item => ({
             PatientId: id,
             HistoryType: "Surgery",
             Name: item.name,
-            Description: item.description || item.dosage || item.details
+            Description: item.description
         })));
 
         var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name);
@@ -271,33 +271,25 @@ const PatientDetails = () => {
 
         var obesitySurgeriesArray = obesitySurgeries.map(item =>
             ({
-                PreOPId: id,
                 Surgery: item.type,
                 SurgeryDetails: item.description
         }));
 
+        consultedDepartments = consultedDepartments.filter(item => item.department);
 
-        surgeries = surgeries.filter(item => item.name);
-
-        surgeries.forEach(item => {
+        consultedDepartments.forEach(item => {
             if (!item.description) {
                 item.description = '-';
             }
         });
 
-
-        var medicalHistoryArray = illnesses.map(item =>
+        var consultedDepartmentsArray = consultedDepartments.map(item =>
             ({
-            PatientId: id,
-            HistoryType: "Illness",
-            Name: item.name,
-            Description: item.description || item.dosage || item.details
+                DepartmentName: item.department,
+                DepartmentDescription: item.description
         }));
 
-
-        var medicalHistoryArray = medicalHistoryArray.filter(item => item.Name);
-
-        savePreOP(preOP, obesitySurgeriesArray, consultedDepartments, id);
+        savePreOP(preOP, obesitySurgeriesArray, consultedDepartmentsArray, id);
         
         setEditable(false);
     };
