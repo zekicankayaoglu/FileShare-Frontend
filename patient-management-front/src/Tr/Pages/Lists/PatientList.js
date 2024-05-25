@@ -31,7 +31,7 @@ function PatientList() {
       fetchPatients();
     }
   }, []);
-
+  
   return (
     <body>
       {/* ======= Header ======= */}
