@@ -9,9 +9,9 @@
 		"configurations": [
 			{
 				"type": "chrome",
-				"name": "http://localhost:7055/patients/2",
+				"name": "http://localhost:7055/tr/patients/2",
 				"request": "launch",
-				"url": "http://localhost:7055/patients/2"
+				"url": "http://localhost:7055/tr/patients/2"
 			}
 		]
 	}

@@ -14,7 +14,23 @@ const PatientDetails = () => {
 
     var [obesitySurgeries, setObesitySurgeries] = useState([{ surgery: '', surgeryDetails: '' }]);
     var [consultedDepartments, setConsultedDepartments] = useState([{ departmentName: '', departmentDescription: '' }]);
-    
+
+    const [files, setFiles] = useState({});
+    const [isChanged, setIsChanged] = useState(false);
+    const [categorizedFiles, setCategorizedFiles] = useState({});
+    const [periodicMonitoring, setPeriodicMonitoring] = useState({
+        month1: { vki: '', ewl: ''},
+        month3: { vki: '', ewl: ''},
+        month6: { vki: '', ewl: ''},
+        month12: { vki: '', ewl: ''}
+    });
+
+    const getFiles = () => {
+        return files;
+    };
+
+
+
     //POST OP
     var [followUpDays, setFollowUpDays] = useState([{
         followUpDate: '',
@@ -44,7 +60,7 @@ const PatientDetails = () => {
         targetWeight: '',
         anesthesiaNurse: ''
     });
-    
+
     //Monitoring
     const [monitoring, setMonitoring] = useState({
         patientState: '',
@@ -54,7 +70,7 @@ const PatientDetails = () => {
     const [isChangeMonitoring, setChangeMonitoring] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
     const [isEditedFollowUp, setIsEditedFollowUp] = useState(false);
-    const[isEdited, setIsEdited] = useState(false);
+    const [isEdited, setIsEdited] = useState(false);
     const [isEditedFollow, setIsEditedFollow] = useState(false);
 
     //OP PROCESS
@@ -118,7 +134,7 @@ const PatientDetails = () => {
             .then(response => response.json())
             .then(fetchedData => {
                 setPostOp(fetchedData);
-                console.log(fetchedData); 
+                console.log(fetchedData);
             })
             .catch(error => {
                 console.error('Error fetching post op:', error);
@@ -133,7 +149,7 @@ const PatientDetails = () => {
 
                 setFollowUpDays(processedData);
                 //setFollowUpDays(fetchedData);
-                console.log(fetchedData); 
+                console.log(fetchedData);
             })
             .catch(error => {
                 console.error('Error fetching followup days:', error);
@@ -142,13 +158,25 @@ const PatientDetails = () => {
             .then(response => response.json())
             .then(fetchedData => {
                 setMonitoring(fetchedData);
-                console.log(fetchedData); 
+                console.log(fetchedData);
             })
             .catch(error => {
                 console.error('Error fetching monitoring:', error);
             });
 
+        fetch(`https://localhost:7050/files/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                categorizeFiles(data);
+            })
+            .catch(error => console.error('Error fetching files:', error));
+
     }, [id]); // Fetch data whenever the ID changes
+
+    useEffect(() => {
+        const hasChanges = Object.keys(files).length > 0;
+        setIsChanged(hasChanges);
+    }, [files]);
 
     const handleAddMedication = () => {
         setMedications([...medications, { name: '', description: '' }]);
@@ -156,7 +184,7 @@ const PatientDetails = () => {
 
     const handleRemoveMedication = index => {
         const confirmation = window.confirm("Seçili ilacı silmek istediğinize emin misiniz?");
-        if(confirmation){
+        if (confirmation) {
             const list = [...medications];
             list.splice(index, 1);
             setMedications(list);
@@ -173,10 +201,10 @@ const PatientDetails = () => {
     const handleAddSurgery = () => {
         setSurgeries([...surgeries, { name: '', description: '' }]);
     };
-    
+
     const handleRemoveSurgery = index => {
         const confirmation = window.confirm("Seçili ameliyatı silmek istediğinize emin misiniz?");
-        if(confirmation){
+        if (confirmation) {
             const list = [...surgeries];
             list.splice(index, 1);
             setSurgeries(list);
@@ -199,7 +227,7 @@ const PatientDetails = () => {
 
     const handleRemoveObesitySurgery = index => {
         const confirmation = window.confirm("Seçili ameliyat türünü silmek istediğinize emin misiniz?");
-        if(confirmation){
+        if (confirmation) {
             const list = [...obesitySurgeries];
             list.splice(index, 1);
             setObesitySurgeries(list);
@@ -208,7 +236,7 @@ const PatientDetails = () => {
 
     const handleRemoveConsultedDepartment = index => {
         const confirmation = window.confirm("Seçili bölümü silmek istediğinize emin misiniz?");
-        if(confirmation){
+        if (confirmation) {
             const list = [...consultedDepartments];
             list.splice(index, 1);
             setConsultedDepartments(list);
@@ -250,7 +278,7 @@ const PatientDetails = () => {
             ...newFollowUp,
             [field]: value,
         });
-        
+
     };
 
     const handleFollowUpSave = () => {
@@ -281,8 +309,8 @@ const PatientDetails = () => {
                 });
             })
             .catch(error => console.error('Error saving follow-up data:', error));
-            setIsAdding(false);
-            setIsEditedFollowUp(false);
+        setIsAdding(false);
+        setIsEditedFollowUp(false);
     };
 
     const handlePostOpChange = (e) => {
@@ -311,8 +339,8 @@ const PatientDetails = () => {
                 setEditable(true);
             })
             .catch(error => console.error('Error saving post-op data:', error));
-            setIsEdited(false);
-                setEditable(false);
+        setIsEdited(false);
+        setEditable(false);
     };
 
 
@@ -491,7 +519,7 @@ const PatientDetails = () => {
         setEditable(!editable);
     };
 
-    const handleEditMonitor= ()=>{
+    const handleEditMonitor = () => {
         setEditableMonitor(!editableMonitor);
     }
     const handleObesitySurgeryChange = (index, event) => {
@@ -514,12 +542,12 @@ const PatientDetails = () => {
 
     const handleRemoveIllness = index => {
         const confirmation = window.confirm("Seçili hastalığı silmek istediğinize emin misiniz?");
-        if(confirmation){
+        if (confirmation) {
             const list = [...illnesses];
             list.splice(index, 1);
             setIllnesses(list);
         }
-        
+
     };
 
     const handleIllnessChange = (index, event) => {
@@ -592,8 +620,195 @@ const PatientDetails = () => {
             .catch(error => {
                 console.error('Error updating monitoring:', error);
             });
-        setEditableMonitor(false);            
+        setEditableMonitor(false);
     };
+
+    //Periodic Monitoring
+
+    // Function to handle file change
+    const handleFileChange = (event, fileType, month) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+            setCategorizedFiles(prevFiles => {
+                const newFiles = { ...prevFiles };
+                if (!newFiles[month]) {
+                    newFiles[month] = {};
+                }
+                newFiles[month][fileType] = {
+                    file: files[0],
+                    name: files[0].name
+                };
+                return newFiles;
+            });
+            setFiles(prevFiles => ({
+                ...prevFiles,
+                [`${month}/${fileType}`]: files[0]
+            }));
+
+            setIsChanged(true);
+        }
+    };
+    
+
+    // Function to save periodic monitoring
+    const savePeriodicMonitoring = async () => {
+        const files = getFiles();
+
+        for (const filePath in files) {
+            const file = files[filePath];
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const [category, fileType] = filePath.split('/');
+        
+            formData.append('category', category);
+            formData.append('fileType', fileType);
+
+            try {
+                const response = await fetch(`https://localhost:7050/upload/${id}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('File upload failed');
+                }
+
+                const result = await response.text();
+                console.log(result);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        }
+
+        setIsChanged(false);
+    };
+
+    // Function to download the file
+    const downloadFile = (fileType, month) => {
+        fetch(`https://localhost:7050/download/${id}?category=${month}&fileType=${fileType}`)
+            .then(response => {
+                if (response.ok) {
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = `${fileType}-${month}.dat`;
+    
+                    if (contentDisposition && contentDisposition.includes('filename=')) {
+                        const matches = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i);
+                        if (matches != null && matches[1]) {
+                            filename = matches[1].replace(/['"]/g, '');
+                            filename = decodeURIComponent(filename.replace(/UTF-8''/, ''));
+                        }
+                    }
+    
+                    return response.blob().then(blob => ({ blob, filename }));
+                } else {
+                    throw new Error('File download failed');
+                }
+            })
+            .then(({ blob, filename }) => {
+                if (blob.size === 0) {
+                    throw new Error('Önce değişiklikleri kaydetmeniz gerekmektedir.');
+                }
+    
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            })
+            .catch(error => {
+                console.error('Error downloading file:', error);
+                alert(error.message); // Show an error message to the user
+            });
+    };
+    
+
+    // Function to remove the file
+    const removeFile = (fileType, month) => {
+        fetch(`https://localhost:7050/delete/${id}?category=${month}&fileType=${fileType}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('File deletion failed');
+                }
+                setCategorizedFiles(prevFiles => {
+                    const newFiles = { ...prevFiles };
+                    delete newFiles[month][fileType];
+                    if (Object.keys(newFiles[month]).length === 0) {
+                        delete newFiles[month];
+                    }
+                    return newFiles;
+                });
+                
+                setFiles(prevFiles => {
+                    const newFiles = { ...prevFiles };
+                    delete newFiles[`${month}/${fileType}`];
+                    return newFiles;
+                });
+            })
+            .catch(error => {
+                console.error('Error deleting file:', error);
+            });
+    };    
+
+    // Function to check file availability
+    const checkFileAvailability = (data) => {
+        const hasFiles = data.some(item => item.file);
+        setIsChanged(hasFiles);
+    };
+
+    // Function to handle periodic monitoring change
+    const handlePeriodicMonitoringChange = (e) => {
+        const { name, value } = e.target;
+        const [field, month] = name.split('-');
+        setPeriodicMonitoring(prevState => ({
+            ...prevState,
+            [`month${month}`]: {
+                ...prevState[`month${month}`],
+                [field]: value
+            }
+        }));
+    };
+
+    // Function to categorize files
+    const categorizeFiles = (files) => {
+        const categories = {};
+
+        files.forEach(filePath => {
+            const [month, fileType, fileName] = filePath.split('/');
+            if (!categories[month]) {
+                categories[month] = {};
+            }
+            categories[month][fileType] = fileName;
+        });
+
+        setCategorizedFiles(categories);
+    };
+    
+    // Function to render file link or input
+    const renderFileLink = (month, fileType) => {
+        const file = categorizedFiles[month]?.[fileType];
+        const fileName = typeof file === 'string' ? file : file?.name; // Ensure fileName is a string
+    
+        return fileName ? (
+            <div className="mb-3 mt-3">
+                <span>{fileName}</span>
+                <button className="btn btn-primary ms-2" onClick={() => downloadFile(fileType, month)}>Download</button>
+                <button className="btn btn-danger ms-2" onClick={() => removeFile(fileType, month)}>Remove</button>
+            </div>
+        ) : (
+            <input type="file" className="form-control-file" onChange={(e) => handleFileChange(e, fileType, month)} />
+        );
+    };
+    
+    
+
+
+
     return (
         <div>
             {/* ======= Header ======= */}
@@ -616,7 +831,7 @@ const PatientDetails = () => {
                             <a className="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                                 <img src="/assets/img/profile-img.jpg" alt="Profile" className="rounded-circle" />
                                 <span className="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
-                            </a>{/* End Profile Iamge Icon */}
+                            </a>{/* End Profile Image Icon */}
                             <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                                 <li className="dropdown-header">
                                     <h6>Kevin Anderson</h6>
@@ -1260,7 +1475,7 @@ const PatientDetails = () => {
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
-                                             <div className="col-lg-12">
+                                                <div className="col-lg-12">
                                                     <h6 className="card-title">Takip Yaptığı Günler</h6>
                                                     <div className="row text-center">
                                                         <div className="col-lg-2">
@@ -1282,237 +1497,237 @@ const PatientDetails = () => {
                                                             <label>Solunum Sayısı</label>
                                                         </div>
                                                     </div>
-                                        {followUpDays.map((day, index) => (
-                                            <div className="row" key={index}>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        value={day.followUpDate}
-                                                        disabled={!editable}
-                                                        onChange={(e) => handleFollowUpChange(index, 'followUpDate', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Nabız"
-                                                        value={day.pulse}
-                                                        disabled={!editable}
-                                                        onChange={(e) => handleFollowUpChange(index, 'pulse', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Ateş"
-                                                        value={day.temperature}
-                                                        disabled={!editable}
-                                                        onChange={(e) => handleFollowUpChange(index, 'temperature', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Kan Basıncı"
-                                                        value={day.bloodPressure}
-                                                        disabled={!editable}
-                                                        onChange={(e) => handleFollowUpChange(index, 'bloodPressure', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Oksijen Saturasyonu"
-                                                        value={day.oxygenSaturation}
-                                                        disabled={!editable}
-                                                        onChange={(e) => handleFollowUpChange(index, 'oxygenSaturation', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Solunum Sayısı"
-                                                        value={day.respiratoryRate}
-                                                        disabled={!editable}
-                                                        onChange={(e) => handleFollowUpChange(index, 'respiratoryRate', e.target.value)}
-                                                    />
+                                                    {followUpDays.map((day, index) => (
+                                                        <div className="row" key={index}>
+                                                            <div className="col-lg-2">
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    value={day.followUpDate}
+                                                                    disabled={!editable}
+                                                                    onChange={(e) => handleFollowUpChange(index, 'followUpDate', e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    placeholder="Nabız"
+                                                                    value={day.pulse}
+                                                                    disabled={!editable}
+                                                                    onChange={(e) => handleFollowUpChange(index, 'pulse', e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    placeholder="Ateş"
+                                                                    value={day.temperature}
+                                                                    disabled={!editable}
+                                                                    onChange={(e) => handleFollowUpChange(index, 'temperature', e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    placeholder="Kan Basıncı"
+                                                                    value={day.bloodPressure}
+                                                                    disabled={!editable}
+                                                                    onChange={(e) => handleFollowUpChange(index, 'bloodPressure', e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    placeholder="Oksijen Saturasyonu"
+                                                                    value={day.oxygenSaturation}
+                                                                    disabled={!editable}
+                                                                    onChange={(e) => handleFollowUpChange(index, 'oxygenSaturation', e.target.value)}
+                                                                />
+                                                            </div>
+                                                            <div className="col-lg-2">
+                                                                <input
+                                                                    type="number"
+                                                                    className="form-control"
+                                                                    placeholder="Solunum Sayısı"
+                                                                    value={day.respiratoryRate}
+                                                                    disabled={!editable}
+                                                                    onChange={(e) => handleFollowUpChange(index, 'respiratoryRate', e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                        {isAdding && (
+                                            {isAdding && (
+                                                <div className="row mb-3">
+                                                    <div className="col-lg-2">
+                                                        <input
+                                                            type="date"
+                                                            className="form-control"
+                                                            value={newFollowUp.followUpDate}
+                                                            onChange={(e) => handleFollowUpNewChange('followUpDate', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-lg-2">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            placeholder="Nabız"
+                                                            value={newFollowUp.pulse}
+                                                            onChange={(e) => handleFollowUpNewChange('pulse', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-lg-2">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            placeholder="Ateş"
+                                                            value={newFollowUp.temperature}
+                                                            onChange={(e) => handleFollowUpNewChange('temperature', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-lg-2">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            placeholder="Kan Basıncı"
+                                                            value={newFollowUp.bloodPressure}
+                                                            onChange={(e) => handleFollowUpNewChange('bloodPressure', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-lg-2">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            placeholder="Oksijen Saturasyonu"
+                                                            value={newFollowUp.oxygenSaturation}
+                                                            onChange={(e) => handleFollowUpNewChange('oxygenSaturation', e.target.value)}
+                                                        />
+                                                    </div>
+                                                    <div className="col-lg-2">
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            placeholder="Solunum Sayısı"
+                                                            value={newFollowUp.respiratoryRate}
+                                                            onChange={(e) => handleFollowUpNewChange('respiratoryRate', e.target.value)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <div className="row">
+                                                <div className="col-lg-12 text-end">
+                                                    {isAdding && (
+                                                        <button className="btn btn-primary me-2" onClick={handleFollowUpSave}>
+                                                            Kaydet
+                                                        </button>
+                                                    )}
+                                                    {isEditedFollowUp && (
+                                                        <button className="btn btn-primary me-2" onClick={handleFollowUpSave}>
+                                                            Kaydet
+                                                        </button>
+                                                    )}
+                                                    {!isAdding && (
+                                                        <button className="btn btn-secondary" onClick={() => setIsAdding(true)}>
+                                                            Ekle
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {/* Postop kaçak testi yapıldımı */}
                                             <div className="row mb-3">
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="date"
-                                                        className="form-control"
-                                                        value={newFollowUp.followUpDate}
-                                                        onChange={(e) => handleFollowUpNewChange('followUpDate', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Nabız"
-                                                        value={newFollowUp.pulse}
-                                                        onChange={(e) => handleFollowUpNewChange('pulse', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Ateş"
-                                                        value={newFollowUp.temperature}
-                                                        onChange={(e) => handleFollowUpNewChange('temperature', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Kan Basıncı"
-                                                        value={newFollowUp.bloodPressure}
-                                                        onChange={(e) => handleFollowUpNewChange('bloodPressure', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Oksijen Saturasyonu"
-                                                        value={newFollowUp.oxygenSaturation}
-                                                        onChange={(e) => handleFollowUpNewChange('oxygenSaturation', e.target.value)}
-                                                    />
-                                                </div>
-                                                <div className="col-lg-2">
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        placeholder="Solunum Sayısı"
-                                                        value={newFollowUp.respiratoryRate}
-                                                        onChange={(e) => handleFollowUpNewChange('respiratoryRate', e.target.value)}
-                                                    />
+                                                <div className="col-lg-12">
+                                                    <div className="form-check">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            id="postOpLeakTest"
+                                                            checked={postOp.postOpLeakTest}
+                                                            onChange={handlePostOpChange}
+                                                            disabled={!editable}
+                                                        />
+                                                        <label className="form-check-label" htmlFor="postOpLeakTest">
+                                                            Postop kaçak testi yapıldı mı?
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        )}
-                                        <div className="row">
-                                            <div className="col-lg-12 text-end">
-                                                {isAdding && (
-                                                    <button className="btn btn-primary me-2" onClick={handleFollowUpSave}>
-                                                        Kaydet
-                                                    </button>
-                                                )}
-                                                {isEditedFollowUp && (
-                                                    <button className="btn btn-primary me-2" onClick={handleFollowUpSave}>
-                                                        Kaydet
-                                                    </button>
-                                                )}
-                                                {!isAdding && (
-                                                    <button className="btn btn-secondary" onClick={() => setIsAdding(true)}>
-                                                        Ekle
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                                                        {/* Postop kaçak testi yapıldımı */}
-                                                                        <div className="row mb-3">
-                                            <div className="col-lg-12">
-                                                <div className="form-check">
+                                            {/* Diren kaçıncı gün çekildi */}
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <h6 className="label">Diren Kaçıncı Gün Çekildi</h6>
                                                     <input
-                                                        className="form-check-input"
-                                                        type="checkbox"
-                                                        id="postOpLeakTest"
-                                                        checked={postOp.postOpLeakTest}
+                                                        type="number"
+                                                        className="form-control"
+                                                        id="drainRemovalDay"
+                                                        placeholder="Kaçıncı gün çekildi"
+                                                        value={postOp.drainRemovalDay}
                                                         onChange={handlePostOpChange}
                                                         disabled={!editable}
                                                     />
-                                                    <label className="form-check-label" htmlFor="postOpLeakTest">
-                                                        Postop kaçak testi yapıldı mı?
-                                                    </label>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* Diren kaçıncı gün çekildi */}
-                                        <div className="row mb-3">
-                                            <div className="col-lg-12">
-                                                <h6 className="label">Diren Kaçıncı Gün Çekildi</h6>
-                                                <input
-                                                    type="number"
-                                                    className="form-control"
-                                                    id="drainRemovalDay"
-                                                    placeholder="Kaçıncı gün çekildi"
-                                                    value={postOp.drainRemovalDay}
-                                                    onChange={handlePostOpChange}
-                                                    disabled={!editable}
-                                                />
+                                            {/* Diyetisyen görüşmesi yapıldı mı */}
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <h6 className="label">Diyetisyen Görüşmesi Yapıldı mı?</h6>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="dietitianConsultation"
+                                                        placeholder="Evet ise diyetisyen ismi..."
+                                                        value={postOp.dietitianConsultation}
+                                                        onChange={handlePostOpChange}
+                                                        disabled={!editable}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        {/* Diyetisyen görüşmesi yapıldı mı */}
-                                        <div className="row mb-3">
-                                            <div className="col-lg-12">
-                                                <h6 className="label">Diyetisyen Görüşmesi Yapıldı mı?</h6>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="dietitianConsultation"
-                                                    placeholder="Evet ise diyetisyen ismi..."
-                                                    value={postOp.dietitianConsultation}
-                                                    onChange={handlePostOpChange}
-                                                    disabled={!editable}
-                                                />
+                                            {/* Taburculukta önerilen ilaçlar */}
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <h6 className="label">Taburculukta Önerilen İlaçlar</h6>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="dischargeMedications"
+                                                        placeholder="Önerilen ilaçlar..."
+                                                        value={postOp.dischargeMedications}
+                                                        onChange={handlePostOpChange}
+                                                        disabled={!editable}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        {/* Taburculukta önerilen ilaçlar */}
-                                        <div className="row mb-3">
-                                            <div className="col-lg-12">
-                                                <h6 className="label">Taburculukta Önerilen İlaçlar</h6>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="dischargeMedications"
-                                                    placeholder="Önerilen ilaçlar..."
-                                                    value={postOp.dischargeMedications}
-                                                    onChange={handlePostOpChange}
-                                                    disabled={!editable}
-                                                />
-                                            </div>
-                                        </div>
-                                        {/* Taburculukta önerilen supplementlerin listesi */}
-                                        <div className="row mb-3">
-                                            <div className="col-lg-12">
-                                                <h6 className="label">Taburculukta Önerilen Supplementlerin Listesi</h6>
-                                                <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    id="dischargeSupplements"
-                                                    placeholder="Önerilen supplementler..."
-                                                    value={postOp.dischargeSupplements}
-                                                    onChange={handlePostOpChange}
-                                                    disabled={!editable}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-lg-12 text-end">
-                                                {isEdited && (
-                                                    <button className="btn btn-primary me-2" onClick={handlePostOpSave}>
-                                                        Kaydet
-                                                    </button>
-                                                )}
-                                            
-                                            </div>
-                                        </div>
                                             {/* Taburculukta önerilen supplementlerin listesi */}
-                                            
+                                            <div className="row mb-3">
+                                                <div className="col-lg-12">
+                                                    <h6 className="label">Taburculukta Önerilen Supplementlerin Listesi</h6>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="dischargeSupplements"
+                                                        placeholder="Önerilen supplementler..."
+                                                        value={postOp.dischargeSupplements}
+                                                        onChange={handlePostOpChange}
+                                                        disabled={!editable}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-lg-12 text-end">
+                                                    {isEdited && (
+                                                        <button className="btn btn-primary me-2" onClick={handlePostOpSave}>
+                                                            Kaydet
+                                                        </button>
+                                                    )}
+
+                                                </div>
+                                            </div>
+                                            {/* Taburculukta önerilen supplementlerin listesi */}
+
                                         </div>
                                         <div className="tab-pane fade profile-overview pt-3" id="monitoring">
                                             <div className="row mb-3">
@@ -1530,18 +1745,18 @@ const PatientDetails = () => {
                                           <div class="col-lg-12">
                                               <button class="btn btn-success">Hasta Progress Notu Ekle</button>
                                           </div>
-                                      </div> */}
+                                            </div> */}
                                             {/* Hasta Progress Notu ve Gözlem Planı */}
                                             <div className="row mb-3">
                                                 <div className="col-lg-6">
                                                     <h6 className="label">Hastanın Durumu</h6>
-                                                    <textarea className="form-control" name = "patientState" rows={5} placeholder="Hastanın durumu... " defaultValue={monitoring.patientState} disabled={!editableMonitor}
-                                                    onChange={handleMonitoringChange} />
+                                                    <textarea className="form-control" name="patientState" rows={5} placeholder="Hastanın durumu... " defaultValue={monitoring.patientState} disabled={!editableMonitor}
+                                                        onChange={handleMonitoringChange} />
                                                 </div>
                                                 <div className="col-lg-6">
                                                     <h6 className="label">Hastanın Gözlem Planı</h6>
-                                                    <textarea className="form-control" name ="patientMonitoring" rows={5} placeholder="Hastanın gözlem planı..." defaultValue={monitoring.patientMonitoring}  disabled={!editableMonitor}
-                                                    onChange={handleMonitoringChange}/>
+                                                    <textarea className="form-control" name="patientMonitoring" rows={5} placeholder="Hastanın gözlem planı..." defaultValue={monitoring.patientMonitoring} disabled={!editableMonitor}
+                                                        onChange={handleMonitoringChange} />
                                                 </div>
                                             </div>
                                             {isChangeMonitoring && (
@@ -1569,7 +1784,7 @@ const PatientDetails = () => {
                                                             <button className="nav-link" id="month6-tab" data-bs-toggle="tab" data-bs-target="#month6" type="button" role="tab" aria-controls="month6" aria-selected="false">6. Ay</button>
                                                         </li>
                                                         <li className="nav-item" role="presentation">
-                                                            <button className="nav-link" id="year1-tab" data-bs-toggle="tab" data-bs-target="#year1" type="button" role="tab" aria-controls="year1" aria-selected="false">1. Yıl</button>
+                                                            <button className="nav-link" id="month12-tab" data-bs-toggle="tab" data-bs-target="#month12" type="button" role="tab" aria-controls="month12" aria-selected="false">12. Ay</button>
                                                         </li>
                                                     </ul>
                                                     {/* Tab content */}
@@ -1578,54 +1793,60 @@ const PatientDetails = () => {
                                                         <div className="tab-pane fade show active" id="month1" role="tabpanel" aria-labelledby="month1-tab">
                                                             <h6 className="label">1. Ay Gözlemleri</h6>
                                                             <ul>
-                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" /></li>
-                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" /></li>
-                                                                <li>Kan Değerleri: <input type="file" className="form-control-file" /></li>
-                                                                <li>Görüntüleme Dosyası: <input type="file" className="form-control-file" /></li>
+                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" name="vki-1" value={periodicMonitoring.month1.vki || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" name="ewl-1" value={periodicMonitoring.month1.ewl || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>Kan Değerleri: {renderFileLink('1-month', 'bloodValues')}</li>
+                                                                <li>Görüntüleme Dosyası: {renderFileLink('1-month', 'imagingFile')}</li>
                                                             </ul>
-                                                            {/* Hasta fotoğrafı ekleme seçeneği */}
                                                             <h6 className="label">Hasta Fotoğrafı</h6>
-                                                            <input type="file" id="patient-photo" className="form-control-file" />
-                                                            <div className="mt-3" id="patient-photo-preview" />
+                                                            {renderFileLink('1-month', 'photo')}
                                                         </div>
+
                                                         {/* 3. Ay Gözlemleri */}
                                                         <div className="tab-pane fade" id="month3" role="tabpanel" aria-labelledby="month3-tab">
                                                             <h6 className="label">3. Ay Gözlemleri</h6>
                                                             <ul>
-                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" /></li>
-                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" /></li>
-                                                                <li>Kan Değerleri: <input type="file" className="form-control-file" /></li>
-                                                                <li>Görüntüleme Dosyası: <input type="file" className="form-control-file" /></li>
+                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" name="vki-3" value={periodicMonitoring.month3.vki || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" name="ewl-3" value={periodicMonitoring.month3.ewl || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>Kan Değerleri: {renderFileLink('3-month', 'bloodValues')}</li>
+                                                                <li>Görüntüleme Dosyası: {renderFileLink('3-month', 'imagingFile')}</li>
                                                             </ul>
-                                                            {/* Hasta fotoğrafı ekleme seçeneği */}
                                                             <h6 className="label">Hasta Fotoğrafı</h6>
-                                                            <input type="file" className="form-control-file" />
+                                                            {renderFileLink('3-month', 'photo')}
                                                         </div>
+
                                                         {/* 6. Ay Gözlemleri */}
                                                         <div className="tab-pane fade" id="month6" role="tabpanel" aria-labelledby="month6-tab">
                                                             <h6 className="label">6. Ay Gözlemleri</h6>
                                                             <ul>
-                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" /></li>
-                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" /></li>
-                                                                <li>Kan Değerleri: <input type="file" className="form-control-file" /></li>
-                                                                <li>Görüntüleme Dosyası: <input type="file" className="form-control-file" /></li>
+                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" name="vki-6" value={periodicMonitoring.month6.vki || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" name="ewl-6" value={periodicMonitoring.month6.ewl || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>Kan Değerleri: {renderFileLink('6-month', 'bloodValues')}</li>
+                                                                <li>Görüntüleme Dosyası: {renderFileLink('6-month', 'imagingFile')}</li>
                                                             </ul>
-                                                            {/* Hasta fotoğrafı ekleme seçeneği */}
                                                             <h6 className="label">Hasta Fotoğrafı</h6>
-                                                            <input type="file" className="form-control-file" />
+                                                            {renderFileLink('6-month', 'photo')}
                                                         </div>
-                                                        {/* 1. Yıl Gözlemleri */}
-                                                        <div className="tab-pane fade" id="year1" role="tabpanel" aria-labelledby="year1-tab">
-                                                            <h6 className="label">1. Yıl Gözlemleri</h6>
+
+                                                        {/* 12. Ay Gözlemleri */}
+                                                        <div className="tab-pane fade" id="month12" role="tabpanel" aria-labelledby="month12-tab">
+                                                            <h6 className="label">12. Ay Gözlemleri</h6>
                                                             <ul>
-                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" /></li>
-                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" /></li>
-                                                                <li>Kan Değerleri: <input type="file" className="form-control-file" /></li>
-                                                                <li>Görüntüleme Dosyası: <input type="file" className="form-control-file" /></li>
+                                                                <li>VKI: <input type="text" className="form-control" placeholder="VKI" name="vki-12" value={periodicMonitoring.month12.vki || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>EWL (%): <input type="text" className="form-control" placeholder="EWL" name="ewl-12" value={periodicMonitoring.month12.ewl || ''} onChange={handlePeriodicMonitoringChange} /></li>
+                                                                <li>Kan Değerleri: {renderFileLink('12-month', 'bloodValues')}</li>
+                                                                <li>Görüntüleme Dosyası: {renderFileLink('12-month', 'imagingFile')}</li>
                                                             </ul>
-                                                            {/* Hasta fotoğrafı ekleme seçeneği */}
                                                             <h6 className="label">Hasta Fotoğrafı</h6>
-                                                            <input type="file" className="form-control-file" />
+                                                            {renderFileLink('12-month', 'photo')}
+                                                        </div>
+
+                                                        <div className="col-lg-12 text-end">
+                                                            {isChanged && (
+                                                                <button className="btn btn-success" onClick={savePeriodicMonitoring}>
+                                                                    Değişiklikleri Kaydet
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
